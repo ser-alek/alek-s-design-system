@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design system — Button</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      /*
+        Token-driven palette: primitive.* holds resolved values from tokens.json;
+        semantic.* aliases match semantic token paths (references via var() only).
+      */
+      :root {
+        /* —— primitive.color —— */
+        --primitive-color-neutral-100: #fafbfc;
+        --primitive-color-neutral-200: #f2f4f6;
+        --primitive-color-neutral-300: #e5e9ed;
+        --primitive-color-neutral-400: #d3d9e0;
+        --primitive-color-neutral-600: #8a96a3;
+        --primitive-color-neutral-700: #606d7a;
+        --primitive-color-neutral-900: #242c35;
+        --primitive-color-neutral-1000: #111518;
+        --primitive-color-indigo-100: #eef0ff;
+        --primitive-color-indigo-200: #d5daff;
+        --primitive-color-indigo-300: #a8b3ff;
+        --primitive-color-indigo-500: #4f63ff;
+        --primitive-color-indigo-600: #2d45f0;
+        --primitive-color-indigo-700: #1f33cc;
+
+        /* —— primitive.space —— */
+        --primitive-space-100: 4px;
+        --primitive-space-200: 8px;
+        --primitive-space-300: 12px;
+        --primitive-space-400: 16px;
+        --primitive-space-500: 24px;
+
+        /* —— primitive.border-radius —— */
+        --primitive-border-radius-300: 8px;
+
+        /* —— primitive.border-width —— */
+        --primitive-border-width-thin: 1px;
+        --primitive-border-width-medium: 2px;
+
+        /* —— primitive.font-size —— */
+        --primitive-font-size-200: 14px;
+        --primitive-font-size-600: 24px;
+
+        /* —— primitive.font-weight —— */
+        --primitive-font-weight-semibold: 600;
+
+        /* —— primitive.line-height —— */
+        --primitive-line-height-300: 1.4;
+
+        /* —— primitive.size —— */
+        --primitive-size-200: 16px;
+
+        /* —— semantic.color.background —— */
+        --semantic-color-background-secondary: var(--primitive-color-neutral-100);
+        --semantic-color-background-highlight: var(--primitive-color-indigo-600);
+        --semantic-color-background-inactive: var(--primitive-color-neutral-200);
+        --semantic-color-background-button-primary: var(
+          --semantic-color-background-highlight
+        );
+        --semantic-color-background-button-secondary: var(
+          --semantic-color-background-secondary
+        );
+        --semantic-color-background-button-primary-hover: var(--primitive-color-indigo-500);
+        --semantic-color-background-button-primary-focus: var(--primitive-color-indigo-600);
+        --semantic-color-background-button-primary-pressed: var(--primitive-color-indigo-700);
+        --semantic-color-background-button-primary-active: var(--primitive-color-indigo-200);
+        --semantic-color-background-button-secondary-hover: var(--primitive-color-indigo-100);
+        --semantic-color-background-button-secondary-focus: var(--primitive-color-neutral-700);
+        --semantic-color-background-button-secondary-pressed: var(--primitive-color-neutral-400);
+        --semantic-color-background-button-secondary-active: var(--primitive-color-neutral-300);
+
+        /* —— semantic.color.border —— */
+        --semantic-color-border-button-primary: var(--primitive-color-indigo-600);
+        --semantic-color-border-button-secondary: var(--primitive-color-neutral-400);
+        --semantic-color-border-focus: var(--primitive-color-indigo-500);
+        --semantic-color-border-disabled: var(--primitive-color-neutral-300);
+
+        /* —— semantic.color.text —— */
+        --semantic-color-text-inverse: var(--primitive-color-neutral-100);
+        --semantic-color-text-button-primary: var(--primitive-color-neutral-100);
+        --semantic-color-text-button-primary-hover: var(--primitive-color-indigo-100);
+        --semantic-color-text-button-primary-disabled: var(--primitive-color-indigo-300);
+        --semantic-color-text-button-secondary: var(--primitive-color-indigo-700);
+        --semantic-color-text-button-secondary-hover: var(--primitive-color-indigo-600);
+        --semantic-color-text-button-secondary-disabled: var(--primitive-color-neutral-400);
+
+        /* —— semantic.color.icon —— */
+        --semantic-color-icon-button-primary: var(--primitive-color-neutral-100);
+        --semantic-color-icon-button-secondary: var(--primitive-color-indigo-600);
+        --semantic-color-icon-disabled: var(--primitive-color-neutral-400);
+
+        /* —— semantic.border-radius —— */
+        --semantic-border-radius-default: var(--primitive-border-radius-300);
+
+        /* —— semantic.size (icons) —— */
+        --semantic-size-icon-button-primary: var(--primitive-size-200);
+        --semantic-size-icon-button-secondary: var(--primitive-size-200);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: var(--primitive-font-size-200);
+        line-height: var(--primitive-line-height-300);
+        font-weight: var(--primitive-font-weight-semibold);
+        color: var(--primitive-color-neutral-1000);
+        background: var(--semantic-color-background-secondary);
+        padding: var(--primitive-space-500);
+      }
+
+      h1 {
+        margin: 0 0 var(--primitive-space-300);
+        font-size: var(--primitive-font-size-600);
+        font-weight: var(--primitive-font-weight-semibold);
+        line-height: var(--primitive-line-height-300);
+        color: var(--primitive-color-neutral-1000);
+      }
+
+      .demo-subheading {
+        margin: 0 0 var(--primitive-space-300);
+        font-size: var(--primitive-font-size-200);
+        font-weight: var(--primitive-font-weight-semibold);
+        line-height: var(--primitive-line-height-300);
+        color: var(--primitive-color-neutral-900);
+      }
+
+      .demo-page__intro {
+        max-width: 52rem;
+        margin-bottom: var(--primitive-space-500);
+        color: var(--primitive-color-neutral-700);
+        font-weight: 400;
+      }
+
+      .demo-page__intro code {
+        font-size: 0.925em;
+        padding: var(--primitive-space-100) var(--primitive-space-200);
+        border-radius: var(--semantic-border-radius-default);
+        background: var(--primitive-color-neutral-200);
+        color: var(--primitive-color-neutral-900);
+      }
+
+      .demo-grid {
+        display: grid;
+        gap: var(--primitive-space-500);
+      }
+
+      .demo-row {
+        display: grid;
+        grid-template-columns: minmax(7rem, 10rem) 1fr 1fr;
+        gap: var(--primitive-space-400);
+        align-items: center;
+        padding: var(--primitive-space-400);
+        border-radius: var(--semantic-border-radius-default);
+        background: var(--primitive-color-neutral-100);
+        border: var(--primitive-border-width-thin) solid var(--primitive-color-neutral-300);
+      }
+
+      .demo-row__label {
+        font-weight: var(--primitive-font-weight-semibold);
+        color: var(--primitive-color-neutral-900);
+      }
+
+      .demo-row__samples {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--primitive-space-300);
+        align-items: center;
+      }
+
+      .demo-hint {
+        margin-top: var(--primitive-space-500);
+        font-weight: 400;
+        color: var(--primitive-color-neutral-700);
+      }
+
+      /* —— Button component —— */
+      .ds-button {
+        --_bg: transparent;
+        --_fg: inherit;
+        --_border: transparent;
+        --_icon: var(--_fg);
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--primitive-space-200);
+        padding: var(--primitive-space-200) var(--primitive-space-400);
+        margin: 0;
+        border: var(--primitive-border-width-thin) solid var(--_border);
+        border-radius: var(--semantic-border-radius-default);
+        background: var(--_bg);
+        color: var(--_fg);
+        font: inherit;
+        font-weight: var(--primitive-font-weight-semibold);
+        line-height: var(--primitive-line-height-300);
+        cursor: pointer;
+        text-decoration: none;
+        user-select: none;
+        vertical-align: middle;
+        transition:
+          background-color 0.15s ease,
+          color 0.15s ease,
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      .ds-button i {
+        font-size: var(--semantic-size-icon-button-primary);
+        width: var(--semantic-size-icon-button-primary);
+        height: var(--semantic-size-icon-button-primary);
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--_icon);
+      }
+
+      .ds-button--secondary i {
+        font-size: var(--semantic-size-icon-button-secondary);
+        width: var(--semantic-size-icon-button-secondary);
+        height: var(--semantic-size-icon-button-secondary);
+      }
+
+      .ds-button:focus {
+        outline: none;
+      }
+
+      .ds-button:focus-visible {
+        box-shadow:
+          0 0 0 var(--primitive-border-width-medium) var(--semantic-color-border-focus),
+          0 0 0 calc(var(--primitive-border-width-medium) + var(--primitive-space-100))
+            var(--semantic-color-background-secondary);
+      }
+
+      .ds-button:disabled,
+      .ds-button.is-disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      /* Primary */
+      .ds-button--primary {
+        --_bg: var(--semantic-color-background-button-primary);
+        --_fg: var(--semantic-color-text-button-primary);
+        --_border: var(--semantic-color-border-button-primary);
+        --_icon: var(--semantic-color-icon-button-primary);
+      }
+
+      .ds-button--primary:hover:not(:disabled):not(.is-disabled) {
+        --_bg: var(--semantic-color-background-button-primary-hover);
+        --_fg: var(--semantic-color-text-button-primary-hover);
+        --_icon: var(--semantic-color-text-button-primary-hover);
+      }
+
+      .ds-button--primary:focus-visible:not(:disabled):not(.is-disabled) {
+        --_bg: var(--semantic-color-background-button-primary-focus);
+        --_fg: var(--semantic-color-text-button-primary);
+        --_icon: var(--semantic-color-icon-button-primary);
+      }
+
+      .ds-button--primary:active:not(:disabled):not(.is-disabled) {
+        --_bg: var(--semantic-color-background-button-primary-pressed);
+        --_fg: var(--semantic-color-text-button-primary);
+        --_icon: var(--semantic-color-icon-button-primary);
+      }
+
+      .ds-button--primary:disabled,
+      .ds-button--primary.is-disabled {
+        --_bg: var(--semantic-color-background-inactive);
+        --_fg: var(--semantic-color-text-button-primary-disabled);
+        --_border: var(--semantic-color-border-disabled);
+        --_icon: var(--semantic-color-icon-disabled);
+      }
+
+      /* Secondary */
+      .ds-button--secondary {
+        --_bg: var(--semantic-color-background-button-secondary);
+        --_fg: var(--semantic-color-text-button-secondary);
+        --_border: var(--semantic-color-border-button-secondary);
+        --_icon: var(--semantic-color-icon-button-secondary);
+      }
+
+      .ds-button--secondary:hover:not(:disabled):not(.is-disabled) {
+        --_bg: var(--semantic-color-background-button-secondary-hover);
+        --_fg: var(--semantic-color-text-button-secondary-hover);
+        --_icon: var(--semantic-color-text-button-secondary-hover);
+      }
+
+      .ds-button--secondary:focus-visible:not(:disabled):not(.is-disabled) {
+        --_bg: var(--semantic-color-background-button-secondary-focus);
+        --_fg: var(--semantic-color-text-inverse);
+        --_icon: var(--semantic-color-text-inverse);
+      }
+
+      .ds-button--secondary:active:not(:disabled):not(.is-disabled) {
+        --_bg: var(--semantic-color-background-button-secondary-pressed);
+        --_fg: var(--semantic-color-text-button-secondary);
+        --_icon: var(--semantic-color-icon-button-secondary);
+      }
+
+      .ds-button--secondary:disabled,
+      .ds-button--secondary.is-disabled {
+        --_bg: var(--semantic-color-background-inactive);
+        --_fg: var(--semantic-color-text-button-secondary-disabled);
+        --_border: var(--semantic-color-border-disabled);
+        --_icon: var(--semantic-color-icon-disabled);
+      }
+
+      /* Simulated states for the demo matrix (non-interactive duplicates) */
+      .ds-button.is-sim-hover.ds-button--primary {
+        --_bg: var(--semantic-color-background-button-primary-hover);
+        --_fg: var(--semantic-color-text-button-primary-hover);
+        --_icon: var(--semantic-color-text-button-primary-hover);
+      }
+
+      .ds-button.is-sim-focus.ds-button--primary {
+        --_bg: var(--semantic-color-background-button-primary-focus);
+        --_fg: var(--semantic-color-text-button-primary);
+        --_icon: var(--semantic-color-icon-button-primary);
+        box-shadow:
+          0 0 0 var(--primitive-border-width-medium) var(--semantic-color-border-focus),
+          0 0 0 calc(var(--primitive-border-width-medium) + var(--primitive-space-100))
+            var(--semantic-color-background-secondary);
+      }
+
+      .ds-button.is-sim-pressed.ds-button--primary {
+        --_bg: var(--semantic-color-background-button-primary-pressed);
+        --_fg: var(--semantic-color-text-button-primary);
+        --_icon: var(--semantic-color-icon-button-primary);
+      }
+
+      .ds-button.is-sim-hover.ds-button--secondary {
+        --_bg: var(--semantic-color-background-button-secondary-hover);
+        --_fg: var(--semantic-color-text-button-secondary-hover);
+        --_icon: var(--semantic-color-text-button-secondary-hover);
+      }
+
+      .ds-button.is-sim-focus.ds-button--secondary {
+        --_bg: var(--semantic-color-background-button-secondary-focus);
+        --_fg: var(--semantic-color-text-inverse);
+        --_icon: var(--semantic-color-text-inverse);
+        box-shadow:
+          0 0 0 var(--primitive-border-width-medium) var(--semantic-color-border-focus),
+          0 0 0 calc(var(--primitive-border-width-medium) + var(--primitive-space-100))
+            var(--semantic-color-background-secondary);
+      }
+
+      .ds-button.is-sim-pressed.ds-button--secondary {
+        --_bg: var(--semantic-color-background-button-secondary-pressed);
+        --_fg: var(--semantic-color-text-button-secondary);
+        --_icon: var(--semantic-color-icon-button-secondary);
+      }
+
+      .ds-button.is-sim-disabled {
+        cursor: default;
+        pointer-events: none;
+      }
+
+      .ds-button.is-sim-disabled.ds-button--primary {
+        --_bg: var(--semantic-color-background-inactive);
+        --_fg: var(--semantic-color-text-button-primary-disabled);
+        --_border: var(--semantic-color-border-disabled);
+        --_icon: var(--semantic-color-icon-disabled);
+      }
+
+      .ds-button.is-sim-disabled.ds-button--secondary {
+        --_bg: var(--semantic-color-background-inactive);
+        --_fg: var(--semantic-color-text-button-secondary-disabled);
+        --_border: var(--semantic-color-border-disabled);
+        --_icon: var(--semantic-color-icon-disabled);
+      }
+
+      #demo-log {
+        margin-top: var(--primitive-space-500);
+        padding: var(--primitive-space-300) var(--primitive-space-400);
+        border-radius: var(--semantic-border-radius-default);
+        background: var(--primitive-color-neutral-200);
+        color: var(--primitive-color-neutral-900);
+        font-weight: 400;
+        min-height: 2.5rem;
+      }
+
+      #demo-log:empty::before {
+        content: "Click an enabled button to verify pointer events.";
+        color: var(--primitive-color-neutral-600);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Button</h1>
+      <p class="demo-page__intro">
+        Reusable primary and secondary buttons using CSS custom properties aligned to
+        <code>tokens.json</code>. Interactive samples use real <code>:hover</code>,
+        <code>:focus-visible</code>, <code>:active</code>, and <code>disabled</code>.
+        The matrix uses static “simulated” rows so every state appears side by side.
+      </p>
+    </header>
+
+    <section class="demo-grid" aria-label="Button state matrix">
+      <div class="demo-row">
+        <span class="demo-row__label">Default</span>
+        <div class="demo-row__samples">
+          <button type="button" class="ds-button ds-button--primary">Primary</button>
+          <button type="button" class="ds-button ds-button--primary">
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            Primary + icon
+          </button>
+        </div>
+        <div class="demo-row__samples">
+          <button type="button" class="ds-button ds-button--secondary">Secondary</button>
+          <button type="button" class="ds-button ds-button--secondary">
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            Secondary + icon
+          </button>
+        </div>
+      </div>
+
+      <div class="demo-row">
+        <span class="demo-row__label">Hover</span>
+        <div class="demo-row__samples" aria-hidden="true">
+          <span class="ds-button ds-button--primary is-sim-hover">Primary</span>
+          <span class="ds-button ds-button--primary is-sim-hover">
+            <i class="fa-solid fa-arrow-right"></i>
+            Primary + icon
+          </span>
+        </div>
+        <div class="demo-row__samples" aria-hidden="true">
+          <span class="ds-button ds-button--secondary is-sim-hover">Secondary</span>
+          <span class="ds-button ds-button--secondary is-sim-hover">
+            <i class="fa-solid fa-arrow-right"></i>
+            Secondary + icon
+          </span>
+        </div>
+      </div>
+
+      <div class="demo-row">
+        <span class="demo-row__label">Focus</span>
+        <div class="demo-row__samples" aria-hidden="true">
+          <span class="ds-button ds-button--primary is-sim-focus">Primary</span>
+          <span class="ds-button ds-button--primary is-sim-focus">
+            <i class="fa-solid fa-arrow-right"></i>
+            Primary + icon
+          </span>
+        </div>
+        <div class="demo-row__samples" aria-hidden="true">
+          <span class="ds-button ds-button--secondary is-sim-focus">Secondary</span>
+          <span class="ds-button ds-button--secondary is-sim-focus">
+            <i class="fa-solid fa-arrow-right"></i>
+            Secondary + icon
+          </span>
+        </div>
+      </div>
+
+      <div class="demo-row">
+        <span class="demo-row__label">Pressed</span>
+        <div class="demo-row__samples" aria-hidden="true">
+          <span class="ds-button ds-button--primary is-sim-pressed">Primary</span>
+          <span class="ds-button ds-button--primary is-sim-pressed">
+            <i class="fa-solid fa-arrow-right"></i>
+            Primary + icon
+          </span>
+        </div>
+        <div class="demo-row__samples" aria-hidden="true">
+          <span class="ds-button ds-button--secondary is-sim-pressed">Secondary</span>
+          <span class="ds-button ds-button--secondary is-sim-pressed">
+            <i class="fa-solid fa-arrow-right"></i>
+            Secondary + icon
+          </span>
+        </div>
+      </div>
+
+      <div class="demo-row">
+        <span class="demo-row__label">Disabled</span>
+        <div class="demo-row__samples" aria-hidden="true">
+          <span class="ds-button ds-button--primary is-sim-disabled">Primary</span>
+          <span class="ds-button ds-button--primary is-sim-disabled">
+            <i class="fa-solid fa-arrow-right"></i>
+            Primary + icon
+          </span>
+        </div>
+        <div class="demo-row__samples" aria-hidden="true">
+          <span class="ds-button ds-button--secondary is-sim-disabled">Secondary</span>
+          <span class="ds-button ds-button--secondary is-sim-disabled">
+            <i class="fa-solid fa-arrow-right"></i>
+            Secondary + icon
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Interactive samples" style="margin-top: var(--primitive-space-500)">
+      <p class="demo-subheading">Interactive (hover, focus, press, disabled)</p>
+      <div class="demo-row" style="grid-template-columns: 1fr">
+        <div class="demo-row__samples">
+          <button type="button" class="ds-button ds-button--primary" data-label="Primary">
+            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+            Send
+          </button>
+          <button type="button" class="ds-button ds-button--secondary" data-label="Secondary">
+            <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+            Open
+          </button>
+          <button type="button" class="ds-button ds-button--primary" disabled data-label="Primary disabled">
+            Disabled
+          </button>
+          <button type="button" class="ds-button ds-button--secondary" disabled data-label="Secondary disabled">
+            Disabled
+          </button>
+        </div>
+      </div>
+      <div id="demo-log" aria-live="polite"></div>
+      <p class="demo-hint">
+        Use Tab to reach enabled buttons and verify the focus ring. Disabled buttons are skipped and do not receive clicks.
+      </p>
+    </section>
+
+    <script>
+      (function () {
+        var logEl = document.getElementById("demo-log");
+        document.querySelectorAll(".ds-button[type='button']").forEach(function (btn) {
+          btn.addEventListener("click", function (e) {
+            if (btn.disabled) {
+              e.preventDefault();
+              e.stopPropagation();
+              return;
+            }
+            var label = btn.getAttribute("data-label") || btn.textContent.trim();
+            logEl.textContent =
+              "Last click: " + label + " at " + new Date().toLocaleTimeString();
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

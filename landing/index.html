@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forma — Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/phosphor-icons"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" crossorigin="anonymous" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease,
+        box-shadow 200ms ease, fill 200ms ease;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      color: var(--semantic-color-text-body);
+      background: var(--semantic-color-background-secondary);
+      transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease,
+        box-shadow 200ms ease;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap {
+      width: 100%;
+      max-width: var(--layout-max-width);
+      margin-inline: auto;
+      padding-inline: var(--primitive-space-400);
+    }
+    .section {
+      padding-block: var(--section-padding-y);
+    }
+    .section-label {
+      font-size: var(--primitive-font-size-100);
+      font-weight: var(--primitive-font-weight-semibold);
+      color: var(--primitive-color-indigo-600);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0 0 var(--primitive-space-200);
+    }
+    .section-title {
+      font-size: var(--primitive-font-size-600);
+      font-weight: var(--primitive-font-weight-bold);
+      color: var(--semantic-color-text-heading);
+      line-height: var(--primitive-line-height-200);
+      letter-spacing: -0.01em;
+      margin: 0 0 var(--primitive-space-300);
+    }
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      gap: var(--primitive-space-300);
+      flex-wrap: wrap;
+    }
+    .section-title-icon {
+      font-size: var(--primitive-font-size-600);
+      color: var(--primitive-color-indigo-500);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .section-reveal {
+      opacity: 0;
+      transform: translateY(var(--primitive-space-300));
+      transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .section-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-stagger > * {
+      opacity: 0;
+      transform: translateY(var(--primitive-space-300));
+      transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-stagger.is-visible > *:nth-child(1) { transition-delay: 0ms; }
+    .reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 40ms; }
+    .reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 80ms; }
+    .reveal-stagger.is-visible > *:nth-child(4) { transition-delay: 120ms; }
+    .reveal-stagger.is-visible > *:nth-child(5) { transition-delay: 160ms; }
+    .reveal-stagger.is-visible > *:nth-child(6) { transition-delay: 200ms; }
+    .reveal-stagger.is-visible > *:nth-child(7) { transition-delay: 240ms; }
+    .reveal-stagger.is-visible > *:nth-child(8) { transition-delay: 280ms; }
+    .reveal-stagger.is-visible > * {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .section-desc {
+      font-size: var(--primitive-font-size-200);
+      font-weight: var(--primitive-font-weight-regular);
+      color: var(--primitive-color-neutral-600);
+      max-width: min(
+        100%,
+        calc(var(--primitive-space-800) * 11 + var(--primitive-space-600))
+      );
+      margin: 0 0 var(--primitive-space-600);
+      line-height: 1.6;
+    }
+    [data-theme="dark"] .section-desc { color: var(--semantic-color-text-secondary); }
+    .two-col {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      gap: var(--primitive-space-700);
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 375px) {
+      .wrap { padding-inline: var(--primitive-space-300); }
+      .hero h1 { font-size: var(--primitive-font-size-700); }
+    }
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: var(--semantic-z-index-navigation);
+      background: color-mix(in srgb, var(--semantic-color-background-secondary) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: var(--primitive-border-width-thin) solid var(--primitive-color-neutral-200);
+      transition: background-color 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
+    }
+    [data-theme="dark"] .nav {
+      border-bottom-color: var(--semantic-color-border-secondary);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: var(--primitive-size-600);
+      max-width: var(--layout-max-width);
+      margin-inline: auto;
+      padding-inline: var(--primitive-space-400);
+    }
+    .nav-brand {
+      font-size: var(--primitive-font-size-200);
+      font-weight: var(--primitive-font-weight-bold);
+      color: var(--primitive-color-neutral-900);
+    }
+    [data-theme="dark"] .nav-brand {
+      color: var(--semantic-color-text-primary);
+    }
+    .nav-links {
+      display: flex;
+      gap: var(--primitive-space-500);
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .nav-links a {
+      position: relative;
+      display: inline-block;
+      padding-bottom: var(--primitive-space-200);
+      margin-bottom: calc(var(--primitive-space-200) * -1);
+      font-size: var(--primitive-font-size-200);
+      font-weight: var(--primitive-font-weight-medium);
+      color: var(--semantic-color-text-secondary);
+      transition: color 200ms ease;
+    }
+    .nav-links a.is-active {
+      color: var(--primitive-color-indigo-600);
+      font-weight: var(--primitive-font-weight-medium);
+    }
+    .nav-links a.is-active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--primitive-border-width-medium);
+      background: var(--primitive-color-indigo-600);
+      border-radius: var(--primitive-border-radius-100);
+    }
+    .nav-links a:hover {
+      color: var(--primitive-color-indigo-600);
+    }
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: var(--primitive-size-500);
+      height: var(--primitive-size-500);
+      padding: 0;
+      border: var(--primitive-border-width-thin) solid var(--primitive-color-neutral-200);
+      border-radius: var(--primitive-border-radius-300);
+      background: var(--semantic-color-background-secondary);
+      color: var(--semantic-color-text-primary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 200ms ease, background-color 200ms ease, color 200ms ease;
+    }
+    [data-theme="dark"] .theme-toggle {
+      border-color: var(--semantic-color-border-secondary);
+    }
+    .theme-toggle:hover {
+      border-color: var(--semantic-color-border-hover);
+    }
+    .theme-toggle .ph,
+    .theme-toggle .ph-duotone {
+      font-size: var(--primitive-font-size-300);
+      line-height: 1;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    /* Hero */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--hero-bg);
+      transition: background-color 200ms ease;
+      padding-block: var(--primitive-space-800);
+    }
+    .hero-mesh {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      opacity: 0.45;
+      background:
+        radial-gradient(
+          ellipse 90% 60% at 15% 25%,
+          color-mix(in srgb, var(--primitive-color-indigo-300) 22%, transparent),
+          transparent 55%
+        ),
+        radial-gradient(
+          ellipse 70% 45% at 85% 70%,
+          color-mix(in srgb, var(--primitive-color-indigo-500) 14%, transparent),
+          transparent 50%
+        ),
+        radial-gradient(
+          circle at 50% 100%,
+          color-mix(in srgb, var(--primitive-color-neutral-500) 10%, transparent),
+          transparent 45%
+        );
+      animation: mesh-drift 28s ease-in-out infinite alternate;
+    }
+    @keyframes mesh-drift {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        transform: translate(var(--primitive-space-300), var(--primitive-space-200)) scale(1.03);
+      }
+    }
+    .hero .wrap {
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 {
+      font-size: var(--primitive-font-size-800);
+      font-weight: var(--primitive-font-weight-bold);
+      color: var(--semantic-color-text-heading);
+      line-height: var(--primitive-line-height-200);
+      margin: 0 0 var(--primitive-space-500);
+      letter-spacing: -0.02em;
+    }
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--primitive-space-200);
+      margin-bottom: var(--primitive-space-400);
+    }
+    .pill {
+      display: inline-block;
+      padding: calc(var(--primitive-space-100) - var(--primitive-border-width-thin))
+        calc(var(--primitive-space-200) + var(--primitive-border-width-medium));
+      border: var(--primitive-border-width-thin) solid var(--primitive-color-neutral-200);
+      border-radius: var(--semantic-border-radius-pill);
+      font-size: var(--primitive-font-size-100);
+      font-weight: var(--primitive-font-weight-medium);
+      color: var(--semantic-color-text-secondary);
+      background: transparent;
+      cursor: pointer;
+      transition: border-color 200ms ease, color 200ms ease, background-color 200ms ease;
+    }
+    [data-theme="dark"] .pill {
+      border-color: var(--semantic-color-border-secondary);
+    }
+    .pill:hover,
+    .pill:focus-visible {
+      outline: none;
+      border-color: var(--semantic-color-border-focus);
+      color: var(--semantic-color-text-active);
+      background: var(--primitive-color-indigo-100);
+    }
+    [data-theme="dark"] .pill:hover,
+    [data-theme="dark"] .pill:focus-visible {
+      background: color-mix(in srgb, var(--primitive-color-indigo-900) 45%, transparent);
+    }
+    .hero-tagline {
+      font-size: var(--primitive-font-size-300);
+      color: var(--semantic-color-text-body);
+      margin: 0 0 var(--primitive-space-600);
+    }
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--primitive-space-200);
+      padding: var(--primitive-space-300) var(--primitive-space-500);
+      background: var(--semantic-color-background-highlight);
+      color: var(--semantic-color-text-button-primary);
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-button-primary);
+      border-radius: var(--semantic-border-radius-default);
+      font-size: var(--primitive-font-size-200);
+      font-weight: var(--primitive-font-weight-semibold);
+      cursor: pointer;
+      transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+    }
+    .btn-cta:hover {
+      background: var(--semantic-color-background-button-primary-hover);
+      color: var(--semantic-color-text-button-primary-hover);
+    }
+    /* Methodology */
+    .methodology {
+      background: var(--primitive-color-neutral-900);
+      color: var(--primitive-color-neutral-100);
+      text-align: center;
+    }
+    .methodology .section-label { color: var(--primitive-color-indigo-300); }
+    .methodology .section-title { color: var(--primitive-color-neutral-100); }
+    .methodology .section-desc {
+      color: var(--primitive-color-neutral-400);
+      margin-inline: auto;
+    }
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: var(--primitive-space-700);
+      text-align: left;
+    }
+    @media (max-width: 900px) {
+      .method-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .method-grid { grid-template-columns: 1fr; }
+    }
+    .method-cell {
+      padding: var(--primitive-space-500);
+      border-right: var(--primitive-border-width-thin) solid var(--primitive-color-neutral-800);
+    }
+    .method-cell:last-child { border-right: none; }
+    @media (max-width: 900px) {
+      .method-cell:nth-child(2n) { border-right: none; }
+      .method-cell { border-bottom: var(--primitive-border-width-thin) solid var(--primitive-color-neutral-800); }
+    }
+    .method-icon {
+      font-size: var(--primitive-size-400);
+      width: var(--primitive-size-400);
+      height: var(--primitive-size-400);
+      margin-bottom: var(--primitive-space-300);
+      color: var(--primitive-color-indigo-400);
+      line-height: 1;
+    }
+    .method-cell h3 {
+      margin: 0 0 var(--primitive-space-200);
+      font-size: var(--primitive-font-size-300);
+      font-weight: var(--primitive-font-weight-semibold);
+      color: var(--primitive-color-neutral-100);
+    }
+    .method-cell p {
+      margin: 0;
+      font-size: var(--primitive-font-size-200);
+      line-height: var(--primitive-line-height-400);
+      color: var(--primitive-color-neutral-500);
+    }
+    /* Color primitives */
+    .color-doc-card {
+      background: var(--semantic-color-background-weak);
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      border-radius: var(--semantic-border-radius-default);
+      padding: var(--primitive-space-600);
+      margin-bottom: var(--primitive-space-700);
+    }
+    .color-group { margin-bottom: var(--primitive-space-700); }
+    .color-group:last-child { margin-bottom: 0; }
+    .color-group-title {
+      font-size: var(--primitive-font-size-300);
+      font-weight: var(--primitive-font-weight-semibold);
+      color: var(--semantic-color-text-heading);
+      margin: 0 0 var(--primitive-space-400);
+    }
+    .color-row {
+      display: grid;
+      grid-template-columns: minmax(0, 140px) 1fr;
+      gap: var(--primitive-space-500);
+      align-items: start;
+    }
+    @media (max-width: 600px) {
+      .color-row { grid-template-columns: 1fr; }
+    }
+    .color-row-label {
+      font-size: var(--primitive-font-size-200);
+      font-weight: var(--primitive-font-weight-medium);
+      color: var(--semantic-color-text-secondary);
+      padding-top: var(--primitive-space-200);
+    }
+    .swatch-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: var(--primitive-space-300);
+    }
+    .swatch-item {
+      text-align: left;
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      border-radius: var(--semantic-border-radius-default);
+      overflow: hidden;
+      background: var(--semantic-color-background-modal);
+      cursor: pointer;
+      transition: box-shadow 150ms ease, transform 150ms ease;
+    }
+    .swatch-item:hover {
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--semantic-color-shadow-default) 20%, transparent);
+      transform: translateY(-1px);
+    }
+    button.swatch {
+      appearance: none;
+      display: block;
+      font: inherit;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+    }
+    .swatch {
+      width: 100%;
+      height: 56px;
+      border-radius: 0;
+      border: none;
+      border-bottom: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      margin-bottom: 0;
+      transition: none;
+    }
+    .swatch:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .swatch-meta {
+      padding: var(--primitive-space-200) var(--primitive-space-300);
+    }
+    .swatch-scale {
+      font-size: var(--primitive-font-size-100);
+      font-weight: var(--primitive-font-weight-semibold);
+      color: var(--semantic-color-text-heading);
+      display: block;
+      line-height: 1.3;
+    }
+    .swatch-name {
+      font-size: var(--primitive-font-size-50);
+      color: var(--semantic-color-text-weak);
+      display: block;
+      font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    }
+    /* Semantic color table */
+    .sem-category { margin-bottom: var(--primitive-space-600); }
+    .sem-category h4 {
+      margin: 0 0 var(--primitive-space-300);
+      font-size: var(--primitive-font-size-200);
+      font-weight: var(--primitive-font-weight-semibold);
+      color: var(--semantic-color-text-heading);
+      text-transform: capitalize;
+    }
+    .sem-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--primitive-space-400);
+      align-items: center;
+      padding: var(--primitive-space-200) var(--primitive-space-300);
+      margin: 0 calc(var(--primitive-space-300) * -1);
+      border-bottom: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      border-left: var(--primitive-border-width-medium) solid transparent;
+      border-radius: var(--primitive-border-radius-100);
+      font-size: var(--primitive-font-size-100);
+      transition: border-left-color 200ms ease, border-left-width 200ms ease, background-color 200ms ease;
+    }
+    .sem-row:hover {
+      border-left-color: var(--primitive-color-indigo-500);
+      border-left-width: calc(var(--primitive-border-width-thin) + var(--primitive-border-width-medium));
+    }
+    .sem-row-name {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: var(--primitive-font-size-100);
+      color: var(--primitive-color-neutral-600);
+      background: var(--primitive-color-neutral-100);
+      padding: var(--primitive-space-100) var(--primitive-space-200);
+      border-radius: var(--primitive-border-radius-100);
+      word-break: break-all;
+    }
+    [data-theme="dark"] .sem-row-name {
+      background: var(--semantic-color-background-weak);
+      color: var(--semantic-color-text-secondary);
+    }
+    .sem-row-val {
+      display: flex;
+      align-items: center;
+      gap: var(--primitive-space-200);
+    }
+    .sem-swatch {
+      width: var(--primitive-space-600);
+      height: var(--primitive-space-300);
+      border-radius: var(--primitive-border-radius-200);
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+    }
+    .sem-hex { color: var(--semantic-color-text-weak); font-variant-numeric: tabular-nums; }
+    /* Token architecture */
+    .token-arch {
+      margin-bottom: var(--primitive-space-800);
+    }
+    .arch-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: var(--primitive-space-300);
+      margin: var(--primitive-space-600) 0;
+      min-height: var(--primitive-space-800);
+    }
+    .arch-node {
+      padding: var(--primitive-space-300) var(--primitive-space-500);
+      border-radius: var(--semantic-border-radius-default);
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-secondary);
+      background: var(--semantic-color-background-modal);
+      font-size: var(--primitive-font-size-200);
+      font-weight: var(--primitive-font-weight-semibold);
+      color: var(--semantic-color-text-heading);
+      opacity: 0;
+      animation: arch-fade 420ms ease-out forwards;
+    }
+    .arch-node:nth-child(1) { animation-delay: 0ms; }
+    .arch-node:nth-child(3) { animation-delay: 120ms; }
+    .arch-node:nth-child(5) { animation-delay: 240ms; }
+    @keyframes arch-fade {
+      from {
+        opacity: 0;
+        transform: translateY(var(--primitive-space-200));
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .arch-arrow {
+      font-size: var(--primitive-font-size-500);
+      color: var(--semantic-color-text-weak);
+      opacity: 0;
+      animation: arch-arrow-in 500ms ease-out forwards;
+    }
+    .arch-arrow:nth-of-type(1) { animation-delay: 80ms; }
+    .arch-arrow:nth-of-type(2) { animation-delay: 200ms; }
+    .arch-arrow:nth-of-type(3) { animation-delay: 320ms; }
+    @keyframes arch-arrow-in {
+      from {
+        opacity: 0;
+        transform: translateX(calc(var(--primitive-space-200) * -1));
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    .arch-labels {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--primitive-space-400);
+      margin-top: var(--primitive-space-300);
+      font-size: var(--primitive-font-size-100);
+      color: var(--semantic-color-text-weak);
+    }
+    .do-dont {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--primitive-space-500);
+      margin-top: var(--primitive-space-600);
+    }
+    @media (max-width: 640px) {
+      .do-dont { grid-template-columns: 1fr; }
+    }
+    .do-card,
+    .dont-card {
+      border-radius: var(--semantic-border-radius-default);
+      padding: var(--primitive-space-500);
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      background: var(--semantic-color-background-modal);
+    }
+    .do-card {
+      border-top: var(--primitive-border-width-medium) solid var(--semantic-color-status-success);
+    }
+    .dont-card {
+      border-top: var(--primitive-border-width-medium) solid var(--semantic-color-status-error);
+    }
+    .do-dont h4 {
+      margin: 0 0 var(--primitive-space-300);
+      font-size: var(--primitive-font-size-300);
+      display: flex;
+      align-items: center;
+      gap: var(--primitive-space-200);
+    }
+    .do-dont p {
+      margin: 0;
+      font-size: var(--primitive-font-size-200);
+      color: var(--semantic-color-text-secondary);
+      line-height: var(--primitive-line-height-400);
+    }
+    .code-doc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--primitive-space-600);
+      margin-top: var(--primitive-space-600);
+    }
+    @media (max-width: 768px) {
+      .code-doc-grid { grid-template-columns: 1fr; }
+    }
+    .code-doc-block {
+      border-radius: var(--semantic-border-radius-default);
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      background: var(--semantic-color-background-weak);
+      padding: var(--primitive-space-500);
+    }
+    .code-doc-block h4 {
+      margin: 0 0 var(--primitive-space-300);
+      font-size: var(--primitive-font-size-200);
+      color: var(--semantic-color-text-heading);
+    }
+    .code-doc-block p {
+      margin: 0 0 var(--primitive-space-400);
+      font-size: var(--primitive-font-size-100);
+      color: var(--semantic-color-text-secondary);
+      line-height: var(--primitive-line-height-400);
+    }
+    .code-snippet {
+      margin: 0;
+      padding: var(--primitive-space-400);
+      border-radius: var(--semantic-border-radius-small);
+      background: var(--semantic-color-background-secondary);
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: var(--primitive-font-size-100);
+      line-height: var(--primitive-line-height-400);
+      color: var(--semantic-color-text-body);
+      overflow-x: auto;
+    }
+    /* Semantic in context */
+    .context-table-wrap {
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      border-radius: var(--semantic-border-radius-default);
+      overflow: hidden;
+      background: var(--semantic-color-background-modal);
+    }
+    .context-head,
+    .context-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) var(--primitive-space-700) minmax(0, 100px) minmax(0, 1fr);
+      gap: var(--primitive-space-300);
+      align-items: center;
+      padding: var(--primitive-space-200) var(--primitive-space-400);
+      font-size: var(--primitive-font-size-100);
+    }
+    .context-head {
+      background: var(--semantic-color-background-weak);
+      font-weight: var(--primitive-font-weight-semibold);
+      color: var(--semantic-color-text-secondary);
+      border-bottom: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+    }
+    .context-row {
+      border-bottom: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+    }
+    .context-row:nth-child(2n + 3) {
+      background: var(--primitive-color-neutral-100);
+    }
+    [data-theme="dark"] .context-row:nth-child(2n + 3) {
+      background: color-mix(in srgb, var(--semantic-color-background-weak) 80%, transparent);
+    }
+    .context-row:last-child {
+      border-bottom: none;
+    }
+    .context-token {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--primitive-space-200);
+      border: none;
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: var(--primitive-font-size-100);
+      color: var(--primitive-color-neutral-600);
+      background: var(--primitive-color-neutral-100);
+      padding: var(--primitive-space-100) var(--primitive-space-200);
+      border-radius: var(--primitive-border-radius-100);
+      cursor: pointer;
+      word-break: break-all;
+      text-decoration: none;
+    }
+    [data-theme="dark"] .context-token {
+      background: var(--semantic-color-background-weak);
+      color: var(--semantic-color-text-secondary);
+    }
+    .context-token .ph {
+      opacity: 0;
+      transition: opacity 200ms ease;
+      flex-shrink: 0;
+      color: var(--semantic-color-text-weak);
+    }
+    .context-token:hover .ph,
+    .context-token:focus-visible .ph {
+      opacity: 1;
+    }
+    .context-swatch {
+      width: var(--primitive-space-600);
+      height: var(--primitive-space-400);
+      border-radius: var(--primitive-border-radius-200);
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+    }
+    /* Typography */
+    .type-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--primitive-font-size-100);
+      margin-bottom: var(--primitive-space-400);
+    }
+    .type-table th, .type-table td {
+      text-align: left;
+      padding: var(--primitive-space-200) var(--primitive-space-300) var(--primitive-space-200) 0;
+      border-bottom: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+    }
+    .type-table th {
+      color: var(--primitive-color-neutral-500);
+      font-weight: var(--primitive-font-weight-semibold);
+      font-size: var(--primitive-font-size-50);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .type-table td:first-child {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: var(--primitive-font-size-100);
+      color: var(--primitive-color-neutral-600);
+    }
+    .type-specimen {
+      font-size: var(--primitive-font-size-800);
+      font-weight: var(--primitive-font-weight-regular);
+      color: var(--semantic-color-text-heading);
+      line-height: var(--primitive-line-height-200);
+      margin: 0;
+    }
+    .type-scale-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--primitive-space-400);
+      border-bottom: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      border-left: var(--primitive-border-width-thin) solid transparent;
+      padding: var(--primitive-space-200) 0 var(--primitive-space-200) var(--primitive-space-200);
+      margin-left: calc(var(--primitive-space-200) * -1);
+      transition: border-color 200ms ease;
+    }
+    .type-scale-line:hover {
+      border-left-color: var(--semantic-color-border-highlight);
+    }
+    .type-scale-label {
+      font-size: var(--primitive-font-size-50);
+      color: var(--semantic-color-text-weak);
+      white-space: nowrap;
+    }
+    /* Spacing scale table */
+    .spacing-table-wrap {
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      border-radius: var(--semantic-border-radius-default);
+      overflow: hidden;
+      background: var(--semantic-color-background-modal);
+    }
+    .spacing-doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--primitive-font-size-100);
+    }
+    .spacing-doc-table th {
+      text-align: left;
+      padding: var(--primitive-space-300) var(--primitive-space-400);
+      background: var(--semantic-color-background-weak);
+      color: var(--primitive-color-neutral-500);
+      font-weight: var(--primitive-font-weight-semibold);
+      font-size: var(--primitive-font-size-50);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+    }
+    .spacing-doc-table td {
+      padding: var(--primitive-space-300) var(--primitive-space-400);
+      border-bottom: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      vertical-align: middle;
+    }
+    .spacing-doc-table tr:last-child td {
+      border-bottom: none;
+    }
+    .spacing-doc-table .spacing-token {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: var(--primitive-font-size-100);
+      color: var(--primitive-color-neutral-600);
+    }
+    .spacing-bar-cell {
+      min-width: 120px;
+    }
+    .spacing-bar-track {
+      height: var(--primitive-space-200);
+      background: var(--semantic-color-background-weak);
+      border-radius: var(--primitive-border-radius-100);
+      overflow: hidden;
+    }
+    .spacing-bar-fill {
+      height: 100%;
+      min-width: var(--primitive-space-100);
+      width: var(--spacing-bar-pct, 50%);
+      background: linear-gradient(
+        90deg,
+        var(--primitive-color-indigo-400),
+        var(--primitive-color-indigo-600)
+      );
+      border-radius: var(--primitive-border-radius-100);
+    }
+    .spacing-px {
+      font-variant-numeric: tabular-nums;
+      color: var(--semantic-color-text-secondary);
+      text-align: right;
+    }
+    .spacing-rem {
+      font-variant-numeric: tabular-nums;
+      color: var(--primitive-color-neutral-500);
+      text-align: right;
+    }
+    .flow-row {
+      display: flex;
+      align-items: center;
+      gap: var(--primitive-space-300);
+      padding: var(--primitive-space-200) 0;
+      border-bottom: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      font-size: var(--primitive-font-size-100);
+    }
+    .flow-num { color: var(--semantic-color-text-weak); width: var(--primitive-size-600); }
+    .flow-name { color: var(--semantic-color-text-secondary); flex: 1; }
+    .flow-px { color: var(--semantic-color-text-weak); font-variant-numeric: tabular-nums; }
+    /* Radius */
+    .radius-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: var(--primitive-space-500);
+    }
+    .radius-card-wrap {
+      transition: transform 200ms ease;
+    }
+    .radius-card-wrap:hover {
+      transform: translateY(calc(var(--primitive-space-100) * -2));
+    }
+    .radius-card {
+      background: var(--semantic-color-background-modal);
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-secondary);
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow 200ms ease;
+    }
+    .radius-card-wrap:hover .radius-card {
+      box-shadow: 0 var(--primitive-space-200) var(--primitive-space-300)
+        color-mix(in srgb, var(--semantic-color-shadow-card-secondary) 45%, transparent);
+    }
+    .radius-meta {
+      text-align: center;
+      margin-top: var(--primitive-space-200);
+      font-size: var(--primitive-font-size-50);
+      color: var(--semantic-color-text-weak);
+    }
+    /* Shadow section */
+    .shadow-stage {
+      background: var(--semantic-color-background-weak);
+      padding: var(--primitive-space-700);
+      border-radius: var(--semantic-border-radius-default);
+    }
+    .shadow-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--primitive-space-600);
+      justify-content: center;
+    }
+    .shadow-card-wrap {
+      text-align: center;
+    }
+    .shadow-card {
+      width: var(--primitive-space-800);
+      height: var(--primitive-space-800);
+      background: var(--semantic-color-background-modal);
+      border-radius: var(--semantic-border-radius-default);
+      margin: 0 auto var(--primitive-space-200);
+      transition: box-shadow 200ms ease, transform 200ms ease;
+    }
+    .shadow-card-wrap:hover .shadow-card {
+      transform: translateY(calc(var(--primitive-space-100) * -1));
+    }
+    .shadow-label {
+      font-size: var(--primitive-font-size-50);
+      color: var(--semantic-color-text-weak);
+    }
+    /* Button matrix — ds-button */
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--primitive-font-size-100);
+    }
+    .matrix th,
+    .matrix td {
+      border: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+      padding: var(--primitive-space-300);
+      vertical-align: middle;
+      text-align: center;
+    }
+    .matrix th {
+      background: var(--semantic-color-background-weak);
+      color: var(--primitive-color-neutral-500);
+      font-weight: var(--primitive-font-weight-semibold);
+      font-size: var(--primitive-font-size-50);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .matrix td:first-child {
+      background: var(--semantic-color-background-weak);
+      color: var(--semantic-color-text-secondary);
+      font-weight: var(--primitive-font-weight-medium);
+      text-align: left;
+    }
+    .matrix th .th-state {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--primitive-space-200);
+    }
+    .matrix .state-info {
+      cursor: help;
+      color: var(--semantic-color-text-weak);
+      font-size: var(--primitive-font-size-300);
+      line-height: 1;
+    }
+    .ds-button {
+      --_bg: transparent;
+      --_fg: inherit;
+      --_border: transparent;
+      --_icon: var(--_fg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--primitive-space-200);
+      padding: var(--primitive-space-200) var(--primitive-space-400);
+      border: var(--primitive-border-width-thin) solid var(--_border);
+      border-radius: var(--semantic-border-radius-default);
+      background: var(--_bg);
+      color: var(--_fg);
+      font: inherit;
+      font-weight: var(--primitive-font-weight-semibold);
+      min-width: var(--primitive-size-800);
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+    .ds-button .ph {
+      font-size: var(--semantic-size-icon-button-primary);
+      color: var(--_icon);
+      flex-shrink: 0;
+    }
+    .ds-button--primary {
+      --_bg: var(--semantic-color-background-highlight);
+      --_fg: var(--semantic-color-text-button-primary);
+      --_border: var(--semantic-color-border-button-primary);
+      --_icon: var(--semantic-color-icon-button-primary);
+    }
+    .ds-button--secondary {
+      --_bg: var(--semantic-color-background-secondary);
+      --_fg: var(--semantic-color-text-button-secondary);
+      --_border: var(--semantic-color-border-button-secondary);
+      --_icon: var(--semantic-color-icon-button-secondary);
+    }
+    .ds-button:focus-visible:not(.ds-button--snapshot) {
+      outline: var(--primitive-border-width-medium) solid var(--semantic-color-border-focus);
+      outline-offset: var(--primitive-border-width-medium);
+      box-shadow: none;
+    }
+    .ds-button--primary:hover:not(.ds-button--snapshot):not(:disabled) {
+      --_bg: var(--semantic-color-background-button-primary-hover);
+      --_fg: var(--semantic-color-text-button-primary-hover);
+      --_border: var(--semantic-color-border-button-primary);
+    }
+    .ds-button--primary:active:not(.ds-button--snapshot):not(:disabled) {
+      --_bg: var(--semantic-color-background-button-primary-pressed);
+      --_border: var(--semantic-color-border-active);
+    }
+    .ds-button--secondary:hover:not(.ds-button--snapshot):not(:disabled) {
+      --_bg: var(--semantic-color-background-button-secondary-hover);
+      --_fg: var(--semantic-color-text-button-secondary-hover);
+      --_border: var(--semantic-color-border-hover);
+    }
+    .ds-button--secondary:active:not(.ds-button--snapshot):not(:disabled) {
+      --_bg: var(--semantic-color-background-button-secondary-pressed);
+      --_border: var(--semantic-color-border-active);
+    }
+    .ds-button:disabled:not(.ds-button--snapshot) {
+      cursor: not-allowed;
+    }
+    .ds-button--primary:disabled:not(.ds-button--snapshot) {
+      --_bg: var(--semantic-color-background-inactive);
+      --_fg: var(--semantic-color-text-button-primary-disabled);
+      --_border: var(--semantic-color-border-disabled);
+      --_icon: var(--semantic-color-icon-disabled);
+    }
+    .ds-button--secondary:disabled:not(.ds-button--snapshot) {
+      --_bg: var(--semantic-color-background-inactive);
+      --_fg: var(--semantic-color-text-button-secondary-disabled);
+      --_border: var(--semantic-color-border-disabled);
+      --_icon: var(--semantic-color-icon-disabled);
+    }
+    .ds-button--snapshot {
+      pointer-events: none;
+    }
+    .ds-button--snapshot.ds-button--sim-disabled {
+      pointer-events: auto;
+      cursor: not-allowed;
+    }
+    .ds-button--primary.ds-button--sim-hover {
+      --_bg: var(--semantic-color-background-button-primary-hover);
+      --_fg: var(--semantic-color-text-button-primary-hover);
+      --_border: var(--semantic-color-border-button-primary);
+    }
+    .ds-button--primary.ds-button--sim-focus {
+      --_bg: var(--semantic-color-background-button-primary-focus);
+      --_fg: var(--semantic-color-text-button-primary);
+      --_border: var(--semantic-color-border-button-primary);
+      outline: var(--primitive-border-width-medium) solid var(--semantic-color-border-focus);
+      outline-offset: var(--primitive-border-width-medium);
+    }
+    .ds-button--primary.ds-button--sim-pressed {
+      --_bg: var(--semantic-color-background-button-primary-pressed);
+      --_fg: var(--semantic-color-text-button-primary);
+      --_border: var(--semantic-color-border-active);
+    }
+    .ds-button--primary.ds-button--sim-disabled {
+      --_bg: var(--semantic-color-background-inactive);
+      --_fg: var(--semantic-color-text-button-primary-disabled);
+      --_border: var(--semantic-color-border-disabled);
+      --_icon: var(--semantic-color-icon-disabled);
+    }
+    .ds-button--secondary.ds-button--sim-hover {
+      --_bg: var(--semantic-color-background-button-secondary-hover);
+      --_fg: var(--semantic-color-text-button-secondary-hover);
+      --_border: var(--semantic-color-border-hover);
+    }
+    .ds-button--secondary.ds-button--sim-focus {
+      --_bg: var(--semantic-color-background-button-secondary-focus);
+      --_fg: var(--semantic-color-text-inverse);
+      --_border: var(--semantic-color-border-focus);
+      outline: var(--primitive-border-width-medium) solid var(--semantic-color-border-focus);
+      outline-offset: var(--primitive-border-width-medium);
+    }
+    .ds-button--secondary.ds-button--sim-pressed {
+      --_bg: var(--semantic-color-background-button-secondary-pressed);
+      --_fg: var(--semantic-color-text-button-secondary);
+      --_border: var(--semantic-color-border-active);
+    }
+    .ds-button--secondary.ds-button--sim-disabled {
+      --_bg: var(--semantic-color-background-inactive);
+      --_fg: var(--semantic-color-text-button-secondary-disabled);
+      --_border: var(--semantic-color-border-disabled);
+      --_icon: var(--semantic-color-icon-disabled);
+    }
+    #copy-toast {
+      position: fixed;
+      bottom: var(--primitive-space-500);
+      left: 50%;
+      transform: translateX(-50%) translateY(var(--primitive-space-400));
+      z-index: var(--semantic-z-index-modal);
+      display: flex;
+      align-items: center;
+      gap: var(--primitive-space-200);
+      padding: var(--primitive-space-300) var(--primitive-space-500);
+      background: var(--primitive-color-neutral-900);
+      color: var(--primitive-color-neutral-100);
+      border-radius: var(--primitive-border-radius-300);
+      font-size: var(--primitive-font-size-100);
+      box-shadow: 0 var(--primitive-space-200) var(--primitive-space-500)
+        color-mix(in srgb, var(--semantic-color-shadow-modal) 40%, transparent);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+    #copy-toast.is-show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    /* Tech */
+    .tech {
+      text-align: center;
+      padding-block: var(--primitive-space-800);
+    }
+    .tech-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--primitive-space-300);
+      justify-content: center;
+      margin-top: var(--primitive-space-500);
+    }
+    .tech-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--primitive-space-200);
+      padding: var(--primitive-space-200) var(--primitive-space-400);
+      border: var(--primitive-border-width-thin) solid var(--primitive-color-neutral-200);
+      border-radius: var(--semantic-border-radius-pill);
+      font-size: var(--primitive-font-size-100);
+      color: var(--semantic-color-text-secondary);
+      background: var(--primitive-color-neutral-100);
+    }
+    [data-theme="dark"] .tech-pill {
+      border-color: var(--semantic-color-border-secondary);
+      background: var(--semantic-color-background-weak);
+    }
+    .tooltip {
+      position: relative;
+    }
+    footer {
+      padding: var(--primitive-space-600);
+      text-align: center;
+      font-size: var(--primitive-font-size-100);
+      color: var(--semantic-color-text-weak);
+      border-top: var(--primitive-border-width-thin) solid var(--semantic-color-border-weak);
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <a class="nav-brand" href="#top">Forma</a>
+      <div class="nav-links">
+        <a href="#methodology" data-nav="methodology">Methodology</a>
+        <a href="#color" data-nav="color">Color</a>
+        <a href="#typography" data-nav="typography">Typography</a>
+        <a href="#spacing" data-nav="spacing">Spacing</a>
+        <a href="#shadow" data-nav="shadow">Shadow</a>
+        <a href="#components" data-nav="components">Components</a>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+          <i class="ph ph-moon" id="theme-toggle-icon" aria-hidden="true"></i>
+          <span class="sr-only" id="theme-label">Dark mode</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="hero-mesh" aria-hidden="true"></div>
+      <div class="wrap">
+        <h1>Forma /<br />Design System</h1>
+        <div class="hero-pills">
+          <a href="#color-primitives" class="pill">Primitive</a>
+          <a href="#semantic-in-context" class="pill">Semantic</a>
+          <a href="#components" class="pill">Component</a>
+        </div>
+        <p class="hero-tagline">Token-based. Scalable. Built from scratch.</p>
+        <a class="btn-cta" href="https://github.com" target="_blank" rel="noopener noreferrer">
+          View on GitHub
+          <i class="ph ph-github-logo" aria-hidden="true"></i>
+        </a>
+      </div>
+    </header>
+
+    <section class="section methodology" id="methodology">
+      <div class="wrap">
+        <p class="section-label section-reveal">Methodology</p>
+        <h2 class="section-title section-reveal">Atomic-Driven Design Methodology</h2>
+        <p class="section-desc section-reveal">Layers build from immutable primitives through semantic intent to reusable patterns. Each tier compounds clarity for product teams.</p>
+        <div class="method-grid reveal-stagger">
+          <div class="method-cell">
+            <i class="ph-duotone ph-circles-four method-icon" aria-hidden="true"></i>
+            <h3>Primitive</h3>
+            <p>Foundational scales: color ramps, spacing, radii, and type that stay raw and context-free.</p>
+          </div>
+          <div class="method-cell">
+            <i class="ph-duotone ph-stack method-icon" aria-hidden="true"></i>
+            <h3>Semantic</h3>
+            <p>Named roles that map primitives to meaning—background, border, text, and icon intent.</p>
+          </div>
+          <div class="method-cell">
+            <i class="ph-duotone ph-cube method-icon" aria-hidden="true"></i>
+            <h3>Component</h3>
+            <p>Composable UI pieces—buttons, inputs, cards—assembled from semantic tokens only.</p>
+          </div>
+          <div class="method-cell">
+            <i class="ph-duotone ph-pattern method-icon" aria-hidden="true"></i>
+            <h3>Pattern</h3>
+            <p>Recurring layouts and flows that repeat component grammar across surfaces.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="color">
+      <div class="wrap">
+        <div class="section-title-row section-reveal">
+          <i class="ph-duotone ph-palette section-title-icon" aria-hidden="true"></i>
+          <h2 class="section-title" style="margin-bottom: 0">Color System</h2>
+        </div>
+        <p class="section-desc section-reveal">Primitive ramps progress light to dark. Semantic aliases resolve per theme for UI chrome.</p>
+
+        <h3 class="color-group-title section-reveal" id="color-primitives">Primitives</h3>
+        <div class="color-doc-card section-reveal">
+          <div id="primitive-colors"></div>
+        </div>
+
+        <div class="token-arch section-reveal" id="token-architecture">
+          <h3 class="color-group-title">Token architecture</h3>
+          <p class="section-desc" style="margin-bottom: var(--primitive-space-400)">
+            Names flow from foundation to property to modifier—consistent across tools and code.
+          </p>
+          <div class="arch-flow" aria-hidden="true">
+            <span class="arch-node">color</span>
+            <span class="arch-arrow ph ph-arrow-right"></span>
+            <span class="arch-node">background</span>
+            <span class="arch-arrow ph ph-arrow-right"></span>
+            <span class="arch-node">highlight</span>
+          </div>
+          <div class="arch-labels">
+            <span>Foundation</span>
+            <span>Property</span>
+            <span>Modifier</span>
+          </div>
+          <div class="do-dont">
+            <div class="do-card">
+              <h4>
+                <i class="ph ph-check-circle" style="color: var(--semantic-color-status-success)" aria-hidden="true"></i>
+                Do
+              </h4>
+              <p>Use semantic tokens for UI surfaces so themes and modes stay aligned.</p>
+            </div>
+            <div class="dont-card">
+              <h4>
+                <i class="ph ph-x-circle" style="color: var(--semantic-color-status-error)" aria-hidden="true"></i>
+                Don&apos;t
+              </h4>
+              <p>Avoid raw primitives in components when a semantic role already exists.</p>
+            </div>
+          </div>
+          <div class="code-doc-grid">
+            <div class="code-doc-block">
+              <h4>Tokens in design</h4>
+              <p>
+                In Figma, bind fills and strokes to published variables so handoff matches the same paths as
+                code.
+              </p>
+            </div>
+            <div class="code-doc-block">
+              <h4>Tokens in code</h4>
+              <p>Semantic aliases resolve to CSS custom properties on the root.</p>
+              <pre class="code-snippet"><code id="code-token-resolve"></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="color-group-title section-reveal" style="margin-top: var(--primitive-space-800)" id="semantic-in-context">
+          Semantic tokens in context
+        </h3>
+        <p class="section-desc section-reveal">Common roles mapped to resolved values for the active theme.</p>
+        <div class="context-table-wrap section-reveal" id="semantic-context-table"></div>
+
+        <h3 class="color-group-title section-reveal" style="margin-top: var(--primitive-space-800)" id="semantic-tokens-block">
+          Semantic tokens
+        </h3>
+        <div id="semantic-colors"></div>
+      </div>
+    </section>
+
+    <section class="section" id="typography">
+      <div class="wrap">
+        <div class="section-title-row section-reveal">
+          <i class="ph-duotone ph-text-aa section-title-icon" aria-hidden="true"></i>
+          <h2 class="section-title" style="margin-bottom: 0">Typography</h2>
+        </div>
+        <p class="section-desc section-reveal">Font sizes and weights are tokenized. The specimen and scale below use Inter with values from the primitive layer.</p>
+        <div class="two-col">
+          <div>
+            <h3 class="color-group-title">Tokens</h3>
+            <p style="font-size: var(--primitive-font-size-200); color: var(--semantic-color-text-secondary); margin-top: 0;">Font size and weight scales drive all text styles.</p>
+            <table class="type-table" id="font-size-table"></table>
+            <table class="type-table" id="font-weight-table"></table>
+          </div>
+          <div>
+            <p class="type-specimen" id="type-specimen">Aa</p>
+          </div>
+        </div>
+        <div id="type-scale" style="margin-top: var(--primitive-space-700)"></div>
+      </div>
+    </section>
+
+    <section class="section" id="spacing">
+      <div class="wrap">
+        <div class="section-title-row section-reveal">
+          <i class="ph-duotone ph-ruler section-title-icon" aria-hidden="true"></i>
+          <h2 class="section-title" style="margin-bottom: 0">Spacing and Radius</h2>
+        </div>
+        <p class="section-desc section-reveal">Spacing uses a numbered scale aligned to implementation. Radius tokens shape surfaces from sharp to pill.</p>
+
+        <div class="two-col" style="margin-bottom: var(--primitive-space-800)">
+          <div>
+            <p class="section-label" style="margin-bottom: var(--primitive-space-200); display: flex; align-items: center; gap: var(--primitive-space-200)">
+              <i class="ph-duotone ph-ruler" aria-hidden="true"></i>
+              Spacing
+            </p>
+            <p class="section-desc" style="margin-bottom: var(--primitive-space-400)">Each step maps a scale key to a token name and pixel value for layout and component padding.</p>
+          </div>
+          <div class="spacing-table-wrap color-doc-card">
+            <table class="spacing-doc-table" id="spacing-scale-table" aria-label="Spacing scale"></table>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <p class="section-label" style="margin-bottom: var(--primitive-space-200); display: flex; align-items: center; gap: var(--primitive-space-200)">
+              <i class="ph-duotone ph-corners-out" aria-hidden="true"></i>
+              Border radius
+            </p>
+            <p class="section-desc" style="margin-bottom: var(--primitive-space-400)">Radius keys follow the same numeric scale; <code style="font-size: var(--primitive-font-size-100)">full</code> maps to a circular pill.</p>
+            <div class="flow-row" style="border: none; padding-top: 0;">
+              <span class="flow-num">e.g.</span>
+              <span class="flow-name">border-radius.300</span>
+              <span class="flow-px" id="radius-example-val"></span>
+            </div>
+          </div>
+          <div class="radius-grid" id="radius-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="shadow">
+      <div class="wrap">
+        <div class="section-title-row section-reveal">
+          <i class="ph-duotone ph-stack section-title-icon" aria-hidden="true"></i>
+          <h2 class="section-title" style="margin-bottom: 0">Shadow</h2>
+        </div>
+        <p class="section-desc section-reveal">Shadow color roles pair with space-based elevation. Cards below share size; only shadow color tokens differ.</p>
+        <div class="shadow-stage">
+          <div class="shadow-row" id="shadow-cards"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="components">
+      <div class="wrap">
+        <div class="section-title-row section-reveal">
+          <i class="ph-duotone ph-squares-four section-title-icon" aria-hidden="true"></i>
+          <h2 class="section-title" style="margin-bottom: 0">Components</h2>
+        </div>
+        <p class="section-desc section-reveal">Button variants and states consume semantic backgrounds, borders, text, and icon colors.</p>
+        <div style="overflow-x: auto">
+          <table class="matrix" id="button-matrix">
+            <thead>
+              <tr>
+                <th scope="col">State</th>
+                <th scope="col">Primary</th>
+                <th scope="col">Primary + icon</th>
+                <th scope="col">Secondary</th>
+                <th scope="col">Secondary + icon</th>
+              </tr>
+            </thead>
+            <tbody id="button-matrix-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tech" id="stack">
+      <div class="wrap">
+        <h2 class="section-title" style="text-align: center">Built with</h2>
+        <div class="tech-pills" id="tech-pills"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="copy-toast" role="status" aria-live="polite">
+    <i class="ph ph-check" aria-hidden="true"></i>
+    <span id="copy-toast-msg">Copied!</span>
+  </div>
+
+  <footer>
+    <div class="wrap">Forma Design System · Token documentation</div>
+  </footer>
+
+  <script>
+    const TOKENS = {"primitive":{"color":{"neutral":{"100":{"value":"#FAFBFC","type":"color","description":"Lightest neutral — near white"},"200":{"value":"#F2F4F6","type":"color"},"300":{"value":"#E5E9ED","type":"color"},"400":{"value":"#D3D9E0","type":"color"},"500":{"value":"#B0BAC4","type":"color"},"600":{"value":"#8A96A3","type":"color"},"700":{"value":"#606D7A","type":"color"},"800":{"value":"#3D4752","type":"color"},"900":{"value":"#242C35","type":"color"},"1000":{"value":"#111518","type":"color","description":"Darkest neutral — near black"}},"indigo":{"100":{"value":"#EEF0FF","type":"color"},"200":{"value":"#D5DAFF","type":"color"},"300":{"value":"#A8B3FF","type":"color"},"400":{"value":"#7B8CFF","type":"color"},"500":{"value":"#4F63FF","type":"color"},"600":{"value":"#2D45F0","type":"color"},"700":{"value":"#1F33CC","type":"color"},"800":{"value":"#1325A3","type":"color"},"900":{"value":"#0A1875","type":"color"},"1000":{"value":"#040D47","type":"color"}},"amber":{"100":{"value":"#FFF8EC","type":"color"},"200":{"value":"#FFEDC4","type":"color"},"300":{"value":"#FFD980","type":"color"},"400":{"value":"#FFC23D","type":"color"},"500":{"value":"#FFAB00","type":"color"},"600":{"value":"#E09600","type":"color"},"700":{"value":"#B87A00","type":"color"},"800":{"value":"#8A5C00","type":"color"}},"success":{"100":{"value":"#E8F7EE","type":"color"},"200":{"value":"#C2E9D0","type":"color"},"300":{"value":"#8DD4AD","type":"color"},"400":{"value":"#55BC87","type":"color"},"500":{"value":"#28A462","type":"color"},"600":{"value":"#1E8750","type":"color"},"700":{"value":"#156B3E","type":"color"},"800":{"value":"#0D4F2C","type":"color"}},"error":{"100":{"value":"#FEF0EF","type":"color"},"200":{"value":"#FDD4D1","type":"color"},"300":{"value":"#FBA8A3","type":"color"},"400":{"value":"#F87B73","type":"color"},"500":{"value":"#F44F45","type":"color"},"600":{"value":"#D93530","type":"color"},"700":{"value":"#B02420","type":"color"},"800":{"value":"#841714","type":"color"}},"warning":{"100":{"value":"#FFF6E6","type":"color"},"200":{"value":"#FFE4B0","type":"color"},"300":{"value":"#FFCF75","type":"color"},"400":{"value":"#FFB83A","type":"color"},"500":{"value":"#FF9F00","type":"color"},"600":{"value":"#CC7E00","type":"color"},"700":{"value":"#9E6100","type":"color"},"800":{"value":"#724500","type":"color"}}},"space":{"100":{"value":"4px","type":"spacing"},"200":{"value":"8px","type":"spacing"},"300":{"value":"12px","type":"spacing"},"400":{"value":"16px","type":"spacing"},"500":{"value":"24px","type":"spacing"},"600":{"value":"32px","type":"spacing"},"700":{"value":"48px","type":"spacing"},"800":{"value":"64px","type":"spacing"}},"border-radius":{"0":{"value":"0px","type":"borderRadius"},"100":{"value":"2px","type":"borderRadius"},"200":{"value":"4px","type":"borderRadius"},"300":{"value":"8px","type":"borderRadius"},"400":{"value":"12px","type":"borderRadius"},"500":{"value":"16px","type":"borderRadius"},"600":{"value":"24px","type":"borderRadius"},"full":{"value":"9999px","type":"borderRadius"}},"size":{"50":{"value":"4px","type":"sizing"},"100":{"value":"8px","type":"sizing"},"200":{"value":"16px","type":"sizing"},"300":{"value":"20px","type":"sizing"},"400":{"value":"24px","type":"sizing"},"500":{"value":"32px","type":"sizing"},"600":{"value":"40px","type":"sizing"},"700":{"value":"48px","type":"sizing"},"800":{"value":"56px","type":"sizing"}},"font-size":{"50":{"value":"10px","type":"fontSizes"},"100":{"value":"12px","type":"fontSizes"},"200":{"value":"14px","type":"fontSizes"},"300":{"value":"16px","type":"fontSizes"},"400":{"value":"18px","type":"fontSizes"},"500":{"value":"20px","type":"fontSizes"},"600":{"value":"24px","type":"fontSizes"},"700":{"value":"32px","type":"fontSizes"},"800":{"value":"40px","type":"fontSizes"}},"font-weight":{"thin":{"value":"100","type":"fontWeights"},"light":{"value":"300","type":"fontWeights"},"regular":{"value":"400","type":"fontWeights"},"medium":{"value":"500","type":"fontWeights"},"semibold":{"value":"600","type":"fontWeights"},"bold":{"value":"700","type":"fontWeights"},"extrabold":{"value":"800","type":"fontWeights"}},"line-height":{"100":{"value":"1.0","type":"lineHeights"},"200":{"value":"1.2","type":"lineHeights"},"300":{"value":"1.4","type":"lineHeights"},"400":{"value":"1.6","type":"lineHeights"},"500":{"value":"1.8","type":"lineHeights"}},"font-style":{"normal":{"value":"normal","type":"other"},"italic":{"value":"italic","type":"other"}},"border-width":{"none":{"value":"0px","type":"borderWidth"},"thin":{"value":"1px","type":"borderWidth"},"medium":{"value":"2px","type":"borderWidth"},"thick":{"value":"4px","type":"borderWidth"}},"z-index":{"0":{"value":"-1","type":"other"},"100":{"value":"100","type":"other"},"200":{"value":"200","type":"other"},"300":{"value":"300","type":"other"},"400":{"value":"400","type":"other"},"500":{"value":"500","type":"other"}},"gradient":{"primary":{"value":"linear-gradient(135deg, #4F63FF 0%, #1325A3 100%)","type":"other"},"brand":{"value":"linear-gradient(135deg, #FFAB00 0%, #FF6B00 100%)","type":"other"},"success":{"value":"linear-gradient(135deg, #28A462 0%, #0D4F2C 100%)","type":"other"},"subtle":{"value":"linear-gradient(180deg, #FAFBFC 0%, #E5E9ED 100%)","type":"other"}}},"semantic":{"color":{"background":{"primary":{"value":"{color.indigo.1000}","type":"color","description":"Primary background — darkest indigo","$extensions":{"dark":"{color.neutral.100}"}},"secondary":{"value":"{color.neutral.100}","type":"color","description":"Default page background","$extensions":{"dark":"{color.neutral.900}"}},"weak":{"value":"{color.neutral.200}","type":"color","description":"Subtle background for less prominent elements","$extensions":{"dark":"{color.neutral.800}"}},"inactive":{"value":"{color.neutral.200}","type":"color","description":"Background for inactive or disabled areas","$extensions":{"dark":"{color.neutral.800}"}},"inverse":{"value":"{color.neutral.1000}","type":"color","description":"Inverse background for contrast elements","$extensions":{"dark":"{color.neutral.100}"}},"brand":{"value":"{color.amber.500}","type":"color","description":"Brand background — amber","$extensions":{"dark":"{color.amber.600}"}},"brand-active":{"value":"{color.amber.400}","type":"color","description":"Active state for brand backgrounds","$extensions":{"dark":"{color.amber.700}"}},"highlight":{"value":"{color.indigo.600}","type":"color","description":"Highlighted elements","$extensions":{"dark":"{color.indigo.400}"}},"decorative":{"value":"{color.indigo.100}","type":"color","description":"Decorative surfaces with no semantic meaning","$extensions":{"dark":"{color.indigo.900}"}},"success":{"value":"{color.success.100}","type":"color","description":"Background for success states","$extensions":{"dark":"{color.success.800}"}},"error":{"value":"{color.error.100}","type":"color","description":"Background for error states","$extensions":{"dark":"{color.error.800}"}},"warning":{"value":"{color.warning.100}","type":"color","description":"Background for warning states","$extensions":{"dark":"{color.warning.800}"}},"info":{"value":"{color.neutral.200}","type":"color","description":"Background for informational messages","$extensions":{"dark":"{color.indigo.900}"}},"tooltip":{"value":"{color.neutral.900}","type":"color","description":"Background for tooltips","$extensions":{"dark":"{color.neutral.700}"}},"modal":{"value":"{color.neutral.100}","type":"color","description":"Background for modal dialogs","$extensions":{"dark":"{color.neutral.900}"}},"badge":{"value":"{color.error.400}","type":"color","description":"Background for badge elements","$extensions":{"dark":"{color.error.600}"}},"button-primary-active":{"value":"{color.indigo.200}","type":"color","description":"Active state background for primary buttons","$extensions":{"dark":"{color.indigo.800}"}},"button-primary-hover":{"value":"{color.indigo.500}","type":"color","description":"Hover state background for primary buttons","$extensions":{"dark":"{color.indigo.400}"}},"button-primary-focus":{"value":"{color.indigo.600}","type":"color","description":"Focus state background for primary buttons","$extensions":{"dark":"{color.indigo.500}"}},"button-primary-pressed":{"value":"{color.indigo.700}","type":"color","description":"Pressed state background for primary buttons","$extensions":{"dark":"{color.indigo.600}"}},"button-secondary-active":{"value":"{color.neutral.300}","type":"color","description":"Active state background for secondary buttons","$extensions":{"dark":"{color.neutral.700}"}},"button-secondary-hover":{"value":"{color.indigo.100}","type":"color","description":"Hover state background for secondary buttons","$extensions":{"dark":"{color.indigo.900}"}},"button-secondary-focus":{"value":"{color.neutral.700}","type":"color","description":"Focus state background for secondary buttons","$extensions":{"dark":"{color.neutral.300}"}},"button-secondary-pressed":{"value":"{color.neutral.400}","type":"color","description":"Pressed state background for secondary buttons","$extensions":{"dark":"{color.neutral.700}"}},"card-primary":{"value":"{color.indigo.500}","type":"color","description":"Background for primary cards","$extensions":{"dark":"{color.indigo.800}"}},"notification-success":{"value":"{color.success.200}","type":"color","description":"Background for success notifications","$extensions":{"dark":"{color.success.700}"}}},"border":{"primary":{"value":"{color.indigo.600}","type":"color","description":"Primary border color","$extensions":{"dark":"{color.indigo.400}"}},"secondary":{"value":"{color.neutral.300}","type":"color","description":"Secondary border color","$extensions":{"dark":"{color.neutral.700}"}},"weak":{"value":"{color.neutral.200}","type":"color","description":"Subtle border for less prominent elements","$extensions":{"dark":"{color.neutral.800}"}},"strong":{"value":"{color.neutral.900}","type":"color","description":"Strong, high contrast border","$extensions":{"dark":"{color.neutral.100}"}},"focus":{"value":"{color.indigo.500}","type":"color","description":"Focus ring border color","$extensions":{"dark":"{color.indigo.300}"}},"active":{"value":"{color.indigo.600}","type":"color","description":"Border for active elements","$extensions":{"dark":"{color.indigo.400}"}},"hover":{"value":"{color.indigo.400}","type":"color","description":"Border on hover","$extensions":{"dark":"{color.indigo.300}"}},"disabled":{"value":"{color.neutral.300}","type":"color","description":"Border for disabled elements","$extensions":{"dark":"{color.neutral.700}"}},"inactive":{"value":"{color.neutral.400}","type":"color","description":"Border for inactive elements","$extensions":{"dark":"{color.neutral.600}"}},"success":{"value":"{color.success.500}","type":"color","description":"Border for success states","$extensions":{"dark":"{color.success.400}"}},"error":{"value":"{color.error.500}","type":"color","description":"Border for error states","$extensions":{"dark":"{color.error.400}"}},"brand":{"value":"{color.amber.500}","type":"color","description":"Border for brand elements","$extensions":{"dark":"{color.amber.400}"}},"highlight":{"value":"{color.indigo.500}","type":"color","description":"Border for highlighted elements","$extensions":{"dark":"{color.indigo.300}"}},"modal":{"value":"{color.neutral.200}","type":"color","description":"Border for modal dialogs","$extensions":{"dark":"{color.neutral.700}"}},"badge":{"value":"{color.neutral.100}","type":"color","description":"Border for badges","$extensions":{"dark":"{color.neutral.800}"}},"button-primary":{"value":"{color.indigo.600}","type":"color","description":"Border for primary buttons","$extensions":{"dark":"{color.indigo.400}"}},"button-secondary":{"value":"{color.neutral.400}","type":"color","description":"Border for secondary buttons","$extensions":{"dark":"{color.neutral.600}"}}},"text":{"primary":{"value":"{color.neutral.1000}","type":"color","description":"Primary text color","$extensions":{"dark":"{color.neutral.100}"}},"secondary":{"value":"{color.neutral.700}","type":"color","description":"Secondary text color","$extensions":{"dark":"{color.neutral.400}"}},"weak":{"value":"{color.neutral.600}","type":"color","description":"Muted text for less important content","$extensions":{"dark":"{color.neutral.500}"}},"disabled":{"value":"{color.neutral.400}","type":"color","description":"Text color for disabled elements","$extensions":{"dark":"{color.neutral.600}"}},"inverse":{"value":"{color.neutral.100}","type":"color","description":"Inverse text for dark backgrounds","$extensions":{"dark":"{color.neutral.900}"}},"brand":{"value":"{color.amber.600}","type":"color","description":"Brand-colored text","$extensions":{"dark":"{color.amber.400}"}},"success":{"value":"{color.success.700}","type":"color","description":"Text for success messages","$extensions":{"dark":"{color.success.300}"}},"error":{"value":"{color.error.700}","type":"color","description":"Text for error messages","$extensions":{"dark":"{color.error.300}"}},"warning":{"value":"{color.warning.700}","type":"color","description":"Text for warning messages","$extensions":{"dark":"{color.warning.300}"}},"active":{"value":"{color.indigo.700}","type":"color","description":"Text for active elements","$extensions":{"dark":"{color.indigo.300}"}},"hover":{"value":"{color.indigo.600}","type":"color","description":"Text on hover","$extensions":{"dark":"{color.indigo.200}"}},"focus":{"value":"{color.indigo.800}","type":"color","description":"Text on focus","$extensions":{"dark":"{color.indigo.200}"}},"heading":{"value":"{color.neutral.1000}","type":"color","description":"Heading text color","$extensions":{"dark":"{color.neutral.100}"}},"body":{"value":"{color.neutral.800}","type":"color","description":"Body text color","$extensions":{"dark":"{color.neutral.300}"}},"button-primary":{"value":"{color.neutral.100}","type":"color","description":"Text color for primary buttons","$extensions":{"dark":"{color.neutral.100}"}},"button-primary-hover":{"value":"{color.indigo.100}","type":"color","description":"Text color on primary button hover","$extensions":{"dark":"{color.indigo.200}"}},"button-primary-disabled":{"value":"{color.indigo.300}","type":"color","description":"Text color on disabled primary button","$extensions":{"dark":"{color.neutral.500}"}},"button-secondary":{"value":"{color.indigo.700}","type":"color","description":"Text color for secondary buttons","$extensions":{"dark":"{color.indigo.300}"}},"button-secondary-hover":{"value":"{color.indigo.600}","type":"color","description":"Text color on secondary button hover","$extensions":{"dark":"{color.indigo.200}"}},"button-secondary-disabled":{"value":"{color.neutral.400}","type":"color","description":"Text color on disabled secondary button","$extensions":{"dark":"{color.neutral.600}"}},"badge":{"value":"{color.neutral.100}","type":"color","description":"Text color for badges","$extensions":{"dark":"{color.neutral.100}"}},"modal":{"value":"{color.neutral.900}","type":"color","description":"Text color for modal content","$extensions":{"dark":"{color.neutral.100}"}},"form":{"value":"{color.neutral.800}","type":"color","description":"Text color for form elements","$extensions":{"dark":"{color.neutral.200}"}},"table":{"value":"{color.neutral.800}","type":"color","description":"Text color for table content","$extensions":{"dark":"{color.neutral.200}"}}},"icon":{"primary":{"value":"{color.neutral.900}","type":"color","description":"Primary icon color","$extensions":{"dark":"{color.neutral.100}"}},"secondary":{"value":"{color.neutral.600}","type":"color","description":"Secondary icon color","$extensions":{"dark":"{color.neutral.400}"}},"success":{"value":"{color.success.600}","type":"color","description":"Icon color for success states","$extensions":{"dark":"{color.success.300}"}},"error":{"value":"{color.error.600}","type":"color","description":"Icon color for error states","$extensions":{"dark":"{color.error.300}"}},"warning":{"value":"{color.warning.600}","type":"color","description":"Icon color for warning states","$extensions":{"dark":"{color.warning.300}"}},"active":{"value":"{color.indigo.600}","type":"color","description":"Icon color for active elements","$extensions":{"dark":"{color.indigo.300}"}},"hover":{"value":"{color.indigo.500}","type":"color","description":"Icon color on hover","$extensions":{"dark":"{color.indigo.200}"}},"focus":{"value":"{color.indigo.700}","type":"color","description":"Icon color on focus","$extensions":{"dark":"{color.indigo.200}"}},"disabled":{"value":"{color.neutral.400}","type":"color","description":"Icon color for disabled elements","$extensions":{"dark":"{color.neutral.600}"}},"brand":{"value":"{color.amber.500}","type":"color","description":"Icon color for brand elements","$extensions":{"dark":"{color.amber.400}"}},"button-primary":{"value":"{color.neutral.100}","type":"color","description":"Icon color for primary buttons","$extensions":{"dark":"{color.indigo.200}"}},"button-secondary":{"value":"{color.indigo.600}","type":"color","description":"Icon color for secondary buttons","$extensions":{"dark":"{color.indigo.300}"}},"badge":{"value":"{color.neutral.100}","type":"color","description":"Icon color for badges","$extensions":{"dark":"{color.neutral.100}"}},"notification-success":{"value":"{color.success.600}","type":"color","description":"Icon color for success notifications","$extensions":{"dark":"{color.success.300}"}}},"shadow":{"default":{"value":"{color.neutral.400}","type":"color","description":"Default shadow color","$extensions":{"dark":"{color.neutral.1000}"}},"active":{"value":"{color.indigo.300}","type":"color","description":"Shadow for active elements","$extensions":{"dark":"{color.indigo.900}"}},"hover":{"value":"{color.neutral.300}","type":"color","description":"Shadow on hover","$extensions":{"dark":"{color.neutral.900}"}},"focus":{"value":"{color.indigo.200}","type":"color","description":"Focus ring shadow","$extensions":{"dark":"{color.indigo.800}"}},"dropdown":{"value":"{color.neutral.400}","type":"color","description":"Shadow for dropdowns","$extensions":{"dark":"{color.neutral.1000}"}},"card-primary":{"value":"{color.indigo.200}","type":"color","description":"Shadow for primary cards","$extensions":{"dark":"{color.indigo.900}"}},"card-secondary":{"value":"{color.neutral.300}","type":"color","description":"Shadow for secondary cards","$extensions":{"dark":"{color.neutral.900}"}},"button":{"value":"{color.indigo.300}","type":"color","description":"Shadow for buttons","$extensions":{"dark":"{color.indigo.900}"}},"modal":{"value":"{color.neutral.500}","type":"color","description":"Shadow for modals","$extensions":{"dark":"{color.neutral.1000}"}},"navigation":{"value":"{color.neutral.300}","type":"color","description":"Shadow for navigation","$extensions":{"dark":"{color.neutral.900}"}}},"status":{"success":{"value":"{color.success.500}","type":"color","description":"Success status color","$extensions":{"dark":"{color.success.400}"}},"error":{"value":"{color.error.500}","type":"color","description":"Error status color","$extensions":{"dark":"{color.error.400}"}},"warning":{"value":"{color.warning.500}","type":"color","description":"Warning status color","$extensions":{"dark":"{color.warning.400}"}},"info":{"value":"{color.indigo.500}","type":"color","description":"Info status color","$extensions":{"dark":"{color.indigo.400}"}},"decorative":{"value":"{color.amber.500}","type":"color","description":"Decorative status color — no semantic meaning","$extensions":{"dark":"{color.amber.400}"}},"progress":{"value":"{color.indigo.500}","type":"color","description":"Progress indicator color","$extensions":{"dark":"{color.indigo.300}"}}}},"border-radius":{"default":{"value":"{border-radius.300}","type":"borderRadius","description":"Default border radius for most components"},"small":{"value":"{border-radius.200}","type":"borderRadius"},"large":{"value":"{border-radius.400}","type":"borderRadius"},"pill":{"value":"{border-radius.full}","type":"borderRadius"},"none":{"value":"{border-radius.0}","type":"borderRadius"},"sharp":{"value":"{border-radius.100}","type":"borderRadius"}},"size":{"icon-small":{"value":"{size.100}","type":"sizing"},"icon-medium":{"value":"{size.200}","type":"sizing"},"icon-large":{"value":"{size.300}","type":"sizing"},"icon-primary":{"value":"{size.200}","type":"sizing"},"icon-secondary":{"value":"{size.200}","type":"sizing"},"icon-badge":{"value":"{size.300}","type":"sizing"},"icon-button-primary":{"value":"{size.200}","type":"sizing"},"icon-button-secondary":{"value":"{size.200}","type":"sizing"}},"z-index":{"default":{"value":"{z-index.0}","type":"other"},"sticky":{"value":"{z-index.200}","type":"other"},"navigation":{"value":"{z-index.300}","type":"other"},"dropdown":{"value":"{z-index.400}","type":"other"},"modal":{"value":"{z-index.500}","type":"other"}}}};
+  </script>
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const body = document.body;
+
+      function walkPrimitive(obj, parts, out) {
+        if (!obj || typeof obj !== "object") return;
+        if ("value" in obj && obj.type) {
+          out["--primitive-" + parts.join("-")] = obj.value;
+          return;
+        }
+        for (const k of Object.keys(obj)) {
+          walkPrimitive(obj[k], [...parts, k], out);
+        }
+      }
+
+      function resolveRef(ref) {
+        if (typeof ref !== "string") return ref;
+        const m = ref.match(/^\{([^}]+)\}$/);
+        if (!m) return ref;
+        const parts = m[1].split(".");
+        let cur = TOKENS.primitive;
+        for (const p of parts) {
+          cur = cur && cur[p];
+        }
+        return cur && cur.value !== undefined ? cur.value : ref;
+      }
+
+      function resolveChain(ref) {
+        let v = ref;
+        let guard = 0;
+        while (typeof v === "string" && /^\{[^}]+\}$/.test(v) && guard++ < 24) {
+          v = resolveRef(v);
+        }
+        return v;
+      }
+
+      function semanticColorVars(mode) {
+        const out = {};
+        const tree = TOKENS.semantic.color;
+        for (const cat of Object.keys(tree)) {
+          for (const key of Object.keys(tree[cat])) {
+            const node = tree[cat][key];
+            if (!node || typeof node.value !== "string") continue;
+            let ref = node.value;
+            if (mode === "dark" && node.$extensions && node.$extensions.dark) {
+              ref = node.$extensions.dark;
+            }
+            const val = resolveChain(ref);
+            const cssKey = "--semantic-color-" + cat + "-" + key.replace(/\./g, "-");
+            out[cssKey] = val;
+          }
+        }
+        return out;
+      }
+
+      function semanticFlat(groupKey, mode) {
+        const out = {};
+        const g = TOKENS.semantic[groupKey];
+        if (!g) return out;
+        for (const key of Object.keys(g)) {
+          const node = g[key];
+          if (!node || typeof node.value !== "string") continue;
+          let ref = node.value;
+          if (mode === "dark" && node.$extensions && node.$extensions.dark) {
+            ref = node.$extensions.dark;
+          }
+          out["--semantic-" + groupKey.replace(/\./g, "-") + "-" + key.replace(/\./g, "-")] = resolveChain(ref);
+        }
+        return out;
+      }
+
+      function applyPrimitives() {
+        const out = {};
+        walkPrimitive(TOKENS.primitive, [], out);
+        for (const k of Object.keys(out)) {
+          root.style.setProperty(k, out[k]);
+        }
+      }
+
+      function layoutVars() {
+        const s800 = resolveChain("{space.800}");
+        const s700 = resolveChain("{space.700}");
+        const s400 = resolveChain("{space.400}");
+        const maxW = "calc(" + s800 + " * 18 + " + s700 + ")";
+        const sectionY = "calc(" + s800 + " + " + s400 + ")";
+        root.style.setProperty("--layout-max-width", maxW);
+        root.style.setProperty("--section-padding-y", sectionY);
+      }
+
+      function applyTheme(mode) {
+        body.setAttribute("data-theme", mode);
+        const sem = Object.assign(
+          {},
+          semanticColorVars(mode),
+          semanticFlat("border-radius", mode),
+          semanticFlat("size", mode),
+          semanticFlat("z-index", mode)
+        );
+        for (const k of Object.keys(sem)) {
+          root.style.setProperty(k, sem[k]);
+        }
+        const n100 = resolveChain("{color.neutral.100}");
+        const n900 = resolveChain("{color.neutral.900}");
+        root.style.setProperty("--hero-bg", mode === "light" ? n100 : n900);
+        const toggleIcon = document.getElementById("theme-toggle-icon");
+        const toggleLabel = document.getElementById("theme-label");
+        if (toggleIcon && toggleLabel) {
+          toggleIcon.className = mode === "light" ? "ph ph-moon" : "ph ph-sun";
+          toggleLabel.textContent = mode === "light" ? "Switch to dark mode" : "Switch to light mode";
+        }
+      }
+
+      function showCopyToast(msg) {
+        const el = document.getElementById("copy-toast");
+        const span = document.getElementById("copy-toast-msg");
+        if (!el || !span) return;
+        span.textContent = msg || "Copied!";
+        el.classList.add("is-show");
+        clearTimeout(showCopyToast._t);
+        showCopyToast._t = setTimeout(function () {
+          el.classList.remove("is-show");
+        }, 1500);
+      }
+
+      function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text).then(function () {
+            showCopyToast("Copied!");
+          });
+        }
+        return Promise.reject();
+      }
+
+      function fillCodeSnippet() {
+        const el = document.getElementById("code-token-resolve");
+        if (!el) return;
+        const hi = getComputedStyle(root).getPropertyValue("--semantic-color-background-highlight").trim();
+        const pr = getComputedStyle(root).getPropertyValue("--primitive-color-indigo-600").trim();
+        el.textContent =
+          "/* Example — semantic highlight resolves to primitive */\n" +
+          "--semantic-color-background-highlight: " +
+          hi +
+          ";\n" +
+          "/* primitive reference */\n--primitive-color-indigo-600: " +
+          pr +
+          ";";
+      }
+
+      function parsePx(val) {
+        const m = String(val).match(/([0-9.]+)px/);
+        return m ? parseFloat(m[1]) : 0;
+      }
+
+      function renderPrimitiveColors() {
+        const groups = ["neutral", "indigo", "amber", "success", "error", "warning"];
+        const el = document.getElementById("primitive-colors");
+        el.innerHTML = "";
+        el.className = "reveal-stagger";
+        for (const g of groups) {
+          const colors = TOKENS.primitive.color[g];
+          const keys = Object.keys(colors).sort((a, b) => Number(a) - Number(b));
+          const row = document.createElement("div");
+          row.className = "color-group";
+          const inner = document.createElement("div");
+          inner.className = "color-row";
+          const lab = document.createElement("div");
+          lab.className = "color-row-label";
+          lab.textContent = g;
+          const strip = document.createElement("div");
+          strip.className = "swatch-strip";
+          for (const k of keys) {
+            const hex = colors[k].value;
+            const item = document.createElement("div");
+            item.className = "swatch-item";
+            item.addEventListener("click", function () {
+              copyText(hex).catch(function () {
+                showCopyToast("Copied!");
+              });
+            });
+            const sw = document.createElement("div");
+            sw.className = "swatch";
+            sw.style.background = hex;
+            const meta = document.createElement("div");
+            meta.className = "swatch-meta";
+            const scale = document.createElement("span");
+            scale.className = "swatch-scale";
+            scale.textContent = k;
+            const nm = document.createElement("span");
+            nm.className = "swatch-name";
+            nm.textContent = hex;
+            meta.appendChild(scale);
+            meta.appendChild(nm);
+            item.appendChild(sw);
+            item.appendChild(meta);
+            strip.appendChild(item);
+          }
+          inner.appendChild(lab);
+          inner.appendChild(strip);
+          row.appendChild(inner);
+          el.appendChild(row);
+        }
+      }
+
+      const CONTEXT_ROWS = [
+        { display: "color.background.primary", cat: "background", key: "primary", usage: "Page background" },
+        {
+          display: "color.background.button-primary",
+          cat: "background",
+          key: "highlight",
+          usage: "CTA buttons",
+        },
+        { display: "color.border.focus", cat: "border", key: "focus", usage: "Focus rings" },
+        { display: "color.text.body", cat: "text", key: "body", usage: "Body copy" },
+        { display: "color.status.success", cat: "status", key: "success", usage: "Success states" },
+        { display: "color.background.badge", cat: "background", key: "badge", usage: "Badge fills" },
+        { display: "color.text.brand", cat: "text", key: "brand", usage: "Brand moments" },
+        { display: "color.background.highlight", cat: "background", key: "highlight", usage: "Highlighted content" },
+      ];
+
+      function renderSemanticContextTable() {
+        const container = document.getElementById("semantic-context-table");
+        if (!container) return;
+        container.innerHTML = "";
+        const head = document.createElement("div");
+        head.className = "context-head";
+        head.innerHTML =
+          "<span>Token</span><span>Swatch</span><span>Hex</span><span>Usage</span>";
+        container.appendChild(head);
+        const mode = body.getAttribute("data-theme") || "light";
+        for (const row of CONTEXT_ROWS) {
+          const node = TOKENS.semantic.color[row.cat][row.key];
+          let ref = node.value;
+          if (mode === "dark" && node.$extensions && node.$extensions.dark) ref = node.$extensions.dark;
+          const hex = resolveChain(ref);
+          const r = document.createElement("div");
+          r.className = "context-row";
+          const tokenCell = document.createElement("div");
+          const tokenBtn = document.createElement("button");
+          tokenBtn.type = "button";
+          tokenBtn.className = "context-token";
+          tokenBtn.appendChild(document.createTextNode(row.display));
+          const copyIc = document.createElement("i");
+          copyIc.className = "ph ph-copy";
+          copyIc.setAttribute("aria-hidden", "true");
+          tokenBtn.appendChild(copyIc);
+          tokenBtn.addEventListener("click", function () {
+            copyText(row.display);
+          });
+          tokenCell.appendChild(tokenBtn);
+          const sw = document.createElement("div");
+          sw.className = "context-swatch";
+          sw.style.background = hex;
+          const hx = document.createElement("span");
+          hx.className = "sem-hex";
+          hx.textContent = hex;
+          const usage = document.createElement("span");
+          usage.style.color = "var(--semantic-color-text-secondary)";
+          usage.textContent = row.usage;
+          r.appendChild(tokenCell);
+          r.appendChild(sw);
+          r.appendChild(hx);
+          r.appendChild(usage);
+          container.appendChild(r);
+        }
+      }
+
+      const SEM_GROUPS = [
+        ["background", TOKENS.semantic.color.background],
+        ["border", TOKENS.semantic.color.border],
+        ["text", TOKENS.semantic.color.text],
+        ["icon", TOKENS.semantic.color.icon],
+      ];
+
+      function renderSemanticColors() {
+        const container = document.getElementById("semantic-colors");
+        container.innerHTML = "";
+        container.className = "reveal-stagger";
+        for (const [title, group] of SEM_GROUPS) {
+          const wrap = document.createElement("div");
+          wrap.className = "sem-category";
+          const h = document.createElement("h4");
+          h.textContent = title;
+          wrap.appendChild(h);
+          const keys = Object.keys(group).sort();
+          for (const k of keys) {
+            const row = document.createElement("div");
+            row.className = "sem-row";
+            const name = document.createElement("div");
+            name.className = "sem-row-name";
+            name.textContent = "color." + title + "." + k;
+            const valCell = document.createElement("div");
+            valCell.className = "sem-row-val";
+            const sw = document.createElement("div");
+            sw.className = "sem-swatch";
+            const mode = body.getAttribute("data-theme") || "light";
+            const node = group[k];
+            let ref = node.value;
+            if (mode === "dark" && node.$extensions && node.$extensions.dark) ref = node.$extensions.dark;
+            const hex = resolveChain(ref);
+            sw.style.background = hex;
+            sw.title = hex;
+            const hx = document.createElement("span");
+            hx.className = "sem-hex";
+            hx.textContent = hex;
+            valCell.appendChild(sw);
+            valCell.appendChild(hx);
+            row.appendChild(name);
+            row.appendChild(valCell);
+            wrap.appendChild(row);
+          }
+          container.appendChild(wrap);
+        }
+      }
+
+      function renderFontTables() {
+        const fs = TOKENS.primitive["font-size"];
+        const fw = TOKENS.primitive["font-weight"];
+        const fsBody = document.getElementById("font-size-table");
+        fsBody.innerHTML = "<thead><tr><th>Name</th><th>Value</th></tr></thead><tbody></tbody>";
+        const fsTbody = fsBody.querySelector("tbody");
+        for (const k of Object.keys(fs).sort((a, b) => Number(a) - Number(b))) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = "<td>font-size." + k + "</td><td>" + fs[k].value + "</td>";
+          fsTbody.appendChild(tr);
+        }
+        const fwBody = document.getElementById("font-weight-table");
+        fwBody.innerHTML = "<thead><tr><th>Name</th><th>Value</th></tr></thead><tbody></tbody>";
+        const fwTbody = fwBody.querySelector("tbody");
+        for (const k of Object.keys(fw)) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = "<td>font-weight." + k + "</td><td>" + fw[k].value + "</td>";
+          fwTbody.appendChild(tr);
+        }
+        const specimen = document.getElementById("type-specimen");
+        specimen.style.fontSize = TOKENS.primitive["font-size"]["800"].value;
+      }
+
+      function renderTypeScale() {
+        const el = document.getElementById("type-scale");
+        const fs = TOKENS.primitive["font-size"];
+        const keys = Object.keys(fs).sort((a, b) => Number(b) - Number(a));
+        el.innerHTML = "";
+        for (const k of keys) {
+          const line = document.createElement("div");
+          line.className = "type-scale-line";
+          const text = document.createElement("span");
+          text.textContent = "The quick brown fox";
+          text.style.fontSize = fs[k].value;
+          text.style.color = "var(--semantic-color-text-heading)";
+          const lab = document.createElement("span");
+          lab.className = "type-scale-label";
+          lab.textContent = "font-size." + k + " · " + fs[k].value;
+          line.appendChild(text);
+          line.appendChild(lab);
+          el.appendChild(line);
+        }
+      }
+
+      function renderSpacing() {
+        const space = TOKENS.primitive.space;
+        const table = document.getElementById("spacing-scale-table");
+        if (!table) return;
+        table.innerHTML = "";
+        const thead = document.createElement("thead");
+        const hr = document.createElement("tr");
+        ["Token", "Visual", "px", "rem"].forEach(function (label) {
+          const th = document.createElement("th");
+          th.scope = "col";
+          th.textContent = label;
+          hr.appendChild(th);
+        });
+        thead.appendChild(hr);
+        table.appendChild(thead);
+        const tbody = document.createElement("tbody");
+        const keys = Object.keys(space).sort(function (a, b) {
+          return Number(a) - Number(b);
+        });
+        const pxVals = keys.map(function (k) {
+          return parsePx(space[k].value);
+        });
+        const maxPx = Math.max.apply(null, pxVals);
+        for (let i = 0; i < keys.length; i++) {
+          const k = keys[i];
+          const pxNum = pxVals[i];
+          const rem = (pxNum / 16).toFixed(4) + "rem";
+          const pct = maxPx ? (pxVals[i] / maxPx) * 100 : 0;
+          const tr = document.createElement("tr");
+          const tdTok = document.createElement("td");
+          tdTok.className = "spacing-token";
+          tdTok.textContent = "space." + k;
+          const tdVis = document.createElement("td");
+          tdVis.className = "spacing-bar-cell";
+          const track = document.createElement("div");
+          track.className = "spacing-bar-track";
+          const fill = document.createElement("div");
+          fill.className = "spacing-bar-fill";
+          fill.style.setProperty("--spacing-bar-pct", pct + "%");
+          track.appendChild(fill);
+          tdVis.appendChild(track);
+          const tdPx = document.createElement("td");
+          tdPx.className = "spacing-px";
+          tdPx.textContent = space[k].value;
+          const tdRem = document.createElement("td");
+          tdRem.className = "spacing-rem";
+          tdRem.textContent = rem;
+          tr.appendChild(tdTok);
+          tr.appendChild(tdVis);
+          tr.appendChild(tdPx);
+          tr.appendChild(tdRem);
+          tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+      }
+
+      function renderRadius() {
+        const br = TOKENS.primitive["border-radius"];
+        const grid = document.getElementById("radius-grid");
+        grid.innerHTML = "";
+        grid.className = "radius-grid reveal-stagger";
+        const keys = Object.keys(br);
+        const order = keys.sort((a, b) => {
+          if (a === "full") return 1;
+          if (b === "full") return -1;
+          return Number(a) - Number(b);
+        });
+        document.getElementById("radius-example-val").textContent = br["300"].value;
+        for (const k of order) {
+          const wrap = document.createElement("div");
+          wrap.className = "radius-card-wrap";
+          const card = document.createElement("div");
+          card.className = "radius-card";
+          card.style.borderRadius = br[k].value;
+          const meta = document.createElement("div");
+          meta.className = "radius-meta";
+          meta.textContent = "border-radius." + k + " · " + br[k].value;
+          wrap.appendChild(card);
+          wrap.appendChild(meta);
+          grid.appendChild(wrap);
+        }
+      }
+
+      function renderShadows() {
+        const shadowColors = TOKENS.semantic.color.shadow;
+        const row = document.getElementById("shadow-cards");
+        row.innerHTML = "";
+        row.className = "shadow-row reveal-stagger";
+        const keys = Object.keys(shadowColors);
+        const y = resolveChain("{space.200}");
+        const blur = resolveChain("{space.500}");
+        const spread = resolveChain("{space.100}");
+        const y2 = resolveChain("{space.300}");
+        const blur2 = resolveChain("{space.600}");
+        for (const k of keys) {
+          const node = shadowColors[k];
+          const mode = body.getAttribute("data-theme") || "light";
+          let ref = node.value;
+          if (mode === "dark" && node.$extensions && node.$extensions.dark) ref = node.$extensions.dark;
+          const c = resolveChain(ref);
+          const wrap = document.createElement("div");
+          wrap.className = "shadow-card-wrap";
+          const card = document.createElement("div");
+          card.className = "shadow-card";
+          const baseShadow = "0 " + y + " " + blur + " " + spread + " " + c;
+          const hoverShadow = "0 " + y2 + " " + blur2 + " " + spread + " " + c;
+          card.style.boxShadow = baseShadow;
+          card.addEventListener("mouseenter", function () {
+            card.style.boxShadow = hoverShadow;
+          });
+          card.addEventListener("mouseleave", function () {
+            card.style.boxShadow = baseShadow;
+          });
+          const lab = document.createElement("div");
+          lab.className = "shadow-label";
+          lab.textContent = "shadow." + k;
+          wrap.appendChild(card);
+          wrap.appendChild(lab);
+          row.appendChild(wrap);
+        }
+      }
+
+      var STATE_HELP = {
+        default: "Resting appearance before pointer or keyboard interaction.",
+        hover: "Pointer hover feedback using semantic hover backgrounds and borders.",
+        focus: "Keyboard focus uses the focus ring color token.",
+        pressed: "Active press while input is held.",
+        disabled: "Disabled controls use inactive backgrounds, disabled borders, and not-allowed cursor.",
+      };
+
+      function buildMatrixCell(state, col) {
+        const primary = col === "p" || col === "pi";
+        const icon = col === "pi" || col === "si";
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ds-button";
+        btn.classList.add(primary ? "ds-button--primary" : "ds-button--secondary");
+        if (icon) {
+          btn.classList.add("ds-button--has-icon");
+        }
+        const isLive = state === "default";
+        if (!isLive) {
+          btn.classList.add("ds-button--snapshot");
+          const sim = {
+            hover: "ds-button--sim-hover",
+            focus: "ds-button--sim-focus",
+            pressed: "ds-button--sim-pressed",
+            disabled: "ds-button--sim-disabled",
+          };
+          if (sim[state]) {
+            btn.classList.add(sim[state]);
+          }
+          if (state === "disabled") {
+            btn.disabled = true;
+          }
+        }
+        if (icon) {
+          const ic = document.createElement("i");
+          ic.className = "ph ph-arrow-right";
+          ic.setAttribute("aria-hidden", "true");
+          btn.appendChild(ic);
+        }
+        btn.appendChild(document.createTextNode("Button"));
+        return btn;
+      }
+
+      function renderMatrix() {
+        const tbody = document.getElementById("button-matrix-body");
+        tbody.innerHTML = "";
+        const stateKeys = ["default", "hover", "focus", "pressed", "disabled"];
+        const stateLabels = ["Default", "Hover", "Focus", "Pressed", "Disabled"];
+        const cols = [
+          ["p", "Primary"],
+          ["pi", "Primary + icon"],
+          ["s", "Secondary"],
+          ["si", "Secondary + icon"],
+        ];
+        for (var si = 0; si < stateKeys.length; si++) {
+          var sid = stateKeys[si];
+          var tr = document.createElement("tr");
+          var th = document.createElement("th");
+          th.scope = "row";
+          var thWrap = document.createElement("span");
+          thWrap.className = "th-state";
+          thWrap.appendChild(document.createTextNode(stateLabels[si] + " "));
+          var info = document.createElement("i");
+          info.className = "ph ph-info state-info";
+          info.setAttribute("title", STATE_HELP[sid]);
+          info.setAttribute("aria-label", STATE_HELP[sid]);
+          thWrap.appendChild(info);
+          th.appendChild(thWrap);
+          tr.appendChild(th);
+          for (var ci = 0; ci < cols.length; ci++) {
+            var td = document.createElement("td");
+            td.appendChild(buildMatrixCell(sid, cols[ci][0]));
+            tr.appendChild(td);
+          }
+          tbody.appendChild(tr);
+        }
+      }
+
+      function renderTech() {
+        const el = document.getElementById("tech-pills");
+        const items = [
+          ["Figma", "ph ph-figma-logo"],
+          ["Token Studio", "ph ph-palette"],
+          ["GitHub", "ph ph-github-logo"],
+          ["CSS Custom Properties", "ph ph-file-css"],
+          ["Cursor", "ph ph-terminal-window"],
+          ["Claude", "ph ph-robot"],
+        ];
+        el.innerHTML = "";
+        for (const [name, ic] of items) {
+          const p = document.createElement("span");
+          p.className = "tech-pill";
+          const i = document.createElement("i");
+          i.className = ic;
+          i.setAttribute("aria-hidden", "true");
+          p.appendChild(i);
+          p.appendChild(document.createTextNode(" " + name));
+          el.appendChild(p);
+        }
+      }
+
+      function init() {
+        applyPrimitives();
+        layoutVars();
+        let stored = null;
+        try {
+          stored = localStorage.getItem("forma-theme");
+        } catch (e) {}
+        applyTheme(stored === "dark" || stored === "light" ? stored : "light");
+        renderPrimitiveColors();
+        renderSemanticColors();
+        renderSemanticContextTable();
+        renderFontTables();
+        renderTypeScale();
+        renderSpacing();
+        renderRadius();
+        renderShadows();
+        renderMatrix();
+        renderTech();
+        fillCodeSnippet();
+
+        var revealIo = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (en) {
+              if (en.isIntersecting) {
+                en.target.classList.add("is-visible");
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -5% 0px" }
+        );
+        document.querySelectorAll(".section-reveal, .reveal-stagger").forEach(function (el) {
+          revealIo.observe(el);
+        });
+
+        var navSections = ["methodology", "color", "typography", "spacing", "shadow", "components"];
+        function updateNavActive() {
+          var cur = navSections[0];
+          for (var ni = 0; ni < navSections.length; ni++) {
+            var sec = document.getElementById(navSections[ni]);
+            if (sec && sec.getBoundingClientRect().top <= 150) {
+              cur = navSections[ni];
+            }
+          }
+          document.querySelectorAll("[data-nav]").forEach(function (a) {
+            a.classList.toggle("is-active", a.getAttribute("data-nav") === cur);
+          });
+        }
+        window.addEventListener("scroll", updateNavActive, { passive: true });
+        updateNavActive();
+
+        document.getElementById("theme-toggle").addEventListener("click", function () {
+          const next = body.getAttribute("data-theme") === "light" ? "dark" : "light";
+          applyTheme(next);
+          try {
+            localStorage.setItem("forma-theme", next);
+          } catch (e) {}
+          renderSemanticColors();
+          renderSemanticContextTable();
+          renderShadows();
+          fillCodeSnippet();
+          renderMatrix();
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
